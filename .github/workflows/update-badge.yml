@@ -36,8 +36,8 @@ jobs:
 
       - name: Commit and push changes
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "MoonLab Bot"
+          git config user.email "khanhvc511@gmail.com"
           
           if git diff --quiet README.md; then
             echo "No changes to commit"
