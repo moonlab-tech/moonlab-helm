@@ -38,17 +38,26 @@ release-name-template: "{{ .Version }}"
 
 # Release notes template
 release-notes-template: |
-  ## Changes
+  ## Chart Updates
 
   {{range .Changes}}
   - {{.}}
+  {{end}}
+
+  ## Available Charts
+
+  {{range .Charts}}
+  - **{{.Name}}** v{{.Version}}: {{.Description}}
   {{end}}
 
   ## Installation
 
   ```bash
   helm repo add moonlab https://moonlab-tech.github.io/moonlab-helm
-  helm install my-release moonlab/chart-name
+  helm repo update
+  
+  # Install specific chart
+  helm install my-release moonlab/chart-name --version v{{.Version}}
   ```
 
 # GitHub token
