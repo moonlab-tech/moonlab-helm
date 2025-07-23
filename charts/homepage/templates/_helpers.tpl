@@ -83,24 +83,27 @@ Usage: {{ include "homepage.configMapNameForFile" (dict "context" . "file" "kube
 {{- index $context.Values.config.existingConfigMaps $file }}
 {{- else if $context.Values.config.existingConfigMap }}
 {{- $context.Values.config.existingConfigMap }}
-{{- else }}
+{{- else if eq (include "homepage.shouldCreateConfigMap" $context) "true" }}
 {{- include "homepage.fullname" $context }}
+{{- else }}
+{{- printf "%s-%s" (include "homepage.fullname" $context) $file }}
 {{- end }}
 {{- end }}
 
 {{/*
 Check if we should create the main ConfigMap
-Returns true if no existing ConfigMaps are specified
+Returns true if we need to create a ConfigMap for any files that don't have external ConfigMaps
 */}}
 {{- define "homepage.shouldCreateConfigMap" -}}
 {{- $hasExistingConfigMap := .Values.config.existingConfigMap -}}
-{{- $hasAnyExistingConfigMaps := false -}}
-{{- range $key, $value := .Values.config.existingConfigMaps -}}
-{{- if $value -}}
-{{- $hasAnyExistingConfigMaps = true -}}
+{{- $allFilesHaveExternalConfigMaps := true -}}
+{{- $configFiles := list "kubernetes" "settings" "bookmarks" "services" "widgets" "docker" "customCss" "customJs" -}}
+{{- range $file := $configFiles -}}
+{{- if not (index $.Values.config.existingConfigMaps $file) -}}
+{{- $allFilesHaveExternalConfigMaps = false -}}
 {{- end -}}
 {{- end -}}
-{{- if or $hasExistingConfigMap $hasAnyExistingConfigMaps -}}
+{{- if or $hasExistingConfigMap $allFilesHaveExternalConfigMaps -}}
 false
 {{- else -}}
 true
