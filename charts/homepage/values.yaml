@@ -1,0 +1,218 @@
+# Default values for homepage.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: ghcr.io/gethomepage/homepage
+  pullPolicy: Always
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "latest"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: ClusterIP
+  port: 3000
+
+ingress:
+  enabled: true
+  className: ""
+  annotations:
+    gethomepage.dev/description: "Dynamically Detected Homepage"
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/group: "Cluster Management"
+    gethomepage.dev/icon: "homepage.png"
+    gethomepage.dev/name: "Homepage"
+  hosts:
+    - host: homepage.my.network
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+# Environment variables
+env:
+  HOMEPAGE_ALLOWED_HOSTS: "gethomepage.dev"
+
+# Environment variables from existing secrets/configmaps
+# Example:
+# envFrom:
+#   - secretRef:
+#       name: my-existing-secret
+#   - configMapRef:
+#       name: my-existing-configmap
+envFrom: []
+
+# RBAC configuration
+rbac:
+  create: true
+
+# Configuration files
+config:
+  # Use existing ConfigMap instead of creating a new one
+  # If set, the chart will not create a ConfigMap and will use the specified one
+  existingConfigMap: ""
+  
+  # Use separate existing ConfigMaps for each configuration file
+  # If specified, these will override the single existingConfigMap setting
+  existingConfigMaps:
+    kubernetes: ""      # ConfigMap name for kubernetes.yaml
+    settings: ""        # ConfigMap name for settings.yaml
+    bookmarks: ""       # ConfigMap name for bookmarks.yaml
+    services: ""        # ConfigMap name for services.yaml
+    widgets: ""         # ConfigMap name for widgets.yaml
+    docker: ""          # ConfigMap name for docker.yaml
+    customCss: ""       # ConfigMap name for custom.css
+    customJs: ""        # ConfigMap name for custom.js
+  
+  # Configuration files (only used if existingConfigMap/existingConfigMaps are not set)
+  # Kubernetes configuration
+  kubernetes: |
+    mode: cluster
+    # Enable automatic service discovery for different types
+    # ingress: true # default, enable ingress only
+    # traefik: true # enable traefik ingressRoute
+    # gateway: true # enable gateway-api
+
+  # Settings configuration (empty by default)
+  settings: ""
+  # Example settings:
+  # settings: |
+  #   providers:
+  #     longhorn:
+  #       url: https://longhorn.my.network
+
+  # Custom CSS
+  customCss: ""
+
+  # Custom JS
+  customJs: ""
+
+  # Bookmarks configuration
+  bookmarks: |
+    - Developer:
+        - Github:
+            - abbr: GH
+              href: https://github.com/
+
+  # Services configuration
+  services: |
+    - My First Group:
+        - My First Service:
+            href: http://localhost/
+            description: Homepage is awesome
+    
+    - My Second Group:
+        - My Second Service:
+            href: http://localhost/
+            description: Homepage is the best
+    
+    - My Third Group:
+        - My Third Service:
+            href: http://localhost/
+            description: Homepage is 😎
+
+  # Widgets configuration
+  widgets: |
+    - kubernetes:
+        cluster:
+          show: true
+          cpu: true
+          memory: true
+          showLabel: true
+          label: "cluster"
+        nodes:
+          show: true
+          cpu: true
+          memory: true
+          showLabel: true
+    - resources:
+        backend: resources
+        expanded: true
+        cpu: true
+        memory: true
+        network: default
+    - search:
+        provider: duckduckgo
+        target: _blank
+
+  # Docker configuration (empty by default)
+  docker: ""
+
+# Persistence
+persistence:
+  logs:
+    enabled: true
+    # storageClass: ""
+    # accessMode: ReadWriteOnce
+    # size: 1Gi
+
+# Deployment strategy
+strategy:
+  type: RollingUpdate
+
+# Revision history limit
+revisionHistoryLimit: 3
+
+# DNS policy
+dnsPolicy: ClusterFirst
+
+# Enable service links
+enableServiceLinks: true
+
+# Automount service account token
+automountServiceAccountToken: true

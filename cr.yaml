@@ -1,0 +1,58 @@
+# Chart Releaser configuration
+# See: https://github.com/helm/chart-releaser
+
+# The charts directory
+charts-dir: charts
+
+# The chart repositories to use
+chart-repos:
+  - name: moonlab-helm
+    url: https://github.com/moonlab-tech/moonlab-helm/releases/download
+
+# Package charts
+package-charts: true
+
+# Push charts to GitHub releases
+push: true
+
+# Install charts
+install: false
+
+# Skip packaging
+skip-packaging: false
+
+# Chart name prefix
+chart-name-prefix: ""
+
+# Chart name suffix
+chart-name-suffix: ""
+
+# Release name prefix
+release-name-prefix: ""
+
+# Release name suffix
+release-name-suffix: ""
+
+# Release notes template
+release-notes-template: |
+  ## Changes
+
+  {{range .Changes}}
+  - {{.}}
+  {{end}}
+
+  ## Installation
+
+  ```bash
+  helm repo add moonlab https://moonlab-tech.github.io/moonlab-helm
+  helm install my-release moonlab/chart-name
+  ```
+
+# GitHub token
+github-token: ${{ secrets.GITHUB_TOKEN }}
+
+# GitHub API URL
+github-api-url: https://api.github.com
+
+# GitHub upload URL
+github-upload-url: https://uploads.github.com 
