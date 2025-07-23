@@ -28,14 +28,20 @@ jobs:
         run: |
           target_sha="${{ github.sha }}" # current commit
           source_sha=`git rev-parse ${target_sha}^` # previous commit
+          echo "::notice::Current commit: $target_sha"
+          echo "::notice::Previous commit: $source_sha"
+          
           # get the list of charts that have changed
           changed="$(git diff --name-only --diff-filter=ACMRT "$source_sha" "$target_sha" -- "charts/*/Chart.yaml" | cut -d '/' -f 2)"
+          echo "::notice::Changed Chart.yaml files: $changed"
 
           # check if the PR has modified any chart versions
           changed_charts=()
           while read -r chart; do
+            echo "::notice::Checking chart: $chart"
             old_version="$(git show "$source_sha":"charts/$chart/Chart.yaml" | yq '.version')"
             new_version="$(yq '.version' "charts/$chart/Chart.yaml")"
+            echo "::notice::Old version: $old_version, New version: $new_version"
             if [[ "$old_version" != "$new_version" ]]; then
               echo "::notice::Chart '$chart' has changed from version $old_version to $new_version"
               changed_charts+=("$chart")
