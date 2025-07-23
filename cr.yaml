@@ -34,7 +34,7 @@ release-name-prefix: ""
 release-name-suffix: ""
 
 # Release name template
-release-name-template: "{{ .Version }}"
+release-name-template: "{{ .Name }}-{{ .Version }}"
 
 # Release notes template
 release-notes-template: |
