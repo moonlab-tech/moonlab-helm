@@ -3,6 +3,29 @@ entries:
   homepage:
   - apiVersion: v2
     appVersion: v1.2.1
+    created: "2025-07-23T18:06:10.466697366Z"
+    description: A Helm chart for Homepage - A highly customizable homepage (or startpage
+      / application dashboard) with Docker and service API integrations.
+    digest: 6feb8d9afe9b2a97d12690e53ded18ec0f948a9bc5b9a6762f10d482b23d5e8e
+    home: https://gethomepage.dev/
+    icon: https://raw.githubusercontent.com/gethomepage/homepage/main/public/icon.png
+    keywords:
+    - homepage
+    - dashboard
+    - startpage
+    - kubernetes
+    maintainers:
+    - name: MoonLab
+      url: https://github.com/moonlab-tech
+    name: homepage
+    sources:
+    - https://github.com/gethomepage/homepage
+    type: application
+    urls:
+    - https://github.com/moonlab-tech/moonlab-helm/releases/download/homepage-1.2.2/homepage-1.2.2.tgz
+    version: 1.2.2
+  - apiVersion: v2
+    appVersion: v1.2.1
     created: "2025-07-23T17:26:57.554869667Z"
     description: A Helm chart for Homepage - A highly customizable homepage (or startpage
       / application dashboard) with Docker and service API integrations.
@@ -93,4 +116,4 @@ entries:
     urls:
     - https://github.com/moonlab-tech/moonlab-helm/releases/download/1.1.4/homepage-1.1.4.tgz
     version: 1.1.4
-generated: "2025-07-23T17:26:57.554883654Z"
+generated: "2025-07-23T18:06:10.466721272Z"
