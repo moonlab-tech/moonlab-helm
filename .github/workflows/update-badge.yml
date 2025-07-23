@@ -1,0 +1,48 @@
+name: Update Version Badge
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'charts/*/Chart.yaml'
+
+jobs:
+  update-badge:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Get chart version
+        id: get_version
+        run: |
+          # Get the homepage chart version
+          VERSION=$(yq '.version' charts/homepage/Chart.yaml)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Chart version: $VERSION"
+
+      - name: Update README badge
+        run: |
+          # Create the badge URL
+          BADGE_URL="https://img.shields.io/badge/homepage-${{ steps.get_version.outputs.version }}-blue"
+          
+          # Update the README.md file
+          sed -i "s|https://img.shields.io/badge/homepage-[^-]*-blue|$BADGE_URL|g" README.md
+          
+          echo "Updated badge URL to: $BADGE_URL"
+
+      - name: Commit and push changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          if git diff --quiet README.md; then
+            echo "No changes to commit"
+          else
+            git add README.md
+            git commit -m "Update version badge to ${{ steps.get_version.outputs.version }}"
+            git push
+          fi 
