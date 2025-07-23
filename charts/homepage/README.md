@@ -12,7 +12,8 @@ This Helm chart deploys [Homepage](https://gethomepage.dev/) - a highly customiz
 To install the chart with the release name `homepage`:
 
 ```bash
-helm install homepage ./homepage-helm-chart
+helm repo add moonlab https://moonlab-tech.github.io/moonlab-helm
+helm install homepage moonlab/homepage
 ```
 
 The command deploys Homepage on the Kubernetes cluster in the default configuration. The [Parameters](#parameters) section lists the parameters that can be configured during installation.
@@ -150,6 +151,8 @@ Homepage can be configured through the `config` section in values.yaml. The main
 
 ### Example Configuration
 
+Create a custom values file (e.g., `my-values.yaml`):
+
 ```yaml
 config:
   settings: |
@@ -167,6 +170,12 @@ config:
             href: https://gitlab.com
             description: DevOps platform
             icon: gitlab.png
+```
+
+Then install with custom values:
+
+```bash
+helm install homepage moonlab/homepage -f my-values.yaml
 ```
 
 ### Ingress Configuration
@@ -274,7 +283,8 @@ persistence:
 To upgrade the Homepage deployment:
 
 ```bash
-helm upgrade homepage ./homepage-helm-chart
+helm repo update
+helm upgrade homepage moonlab/homepage
 ```
 
 ## Troubleshooting

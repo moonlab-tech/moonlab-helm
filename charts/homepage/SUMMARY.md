@@ -60,19 +60,22 @@ homepage-helm-chart/
 
 ## Installation Methods
 
-### Method 1: Using Helm directly
+### Method 1: Basic installation
 ```bash
-helm install homepage ./homepage-helm-chart
+helm repo add moonlab https://moonlab-tech.github.io/moonlab-helm
+helm install homepage moonlab/homepage
 ```
 
-### Method 2: Using the installation script
+### Method 2: With custom values
 ```bash
-./homepage-helm-chart/install.sh
+helm repo add moonlab https://moonlab-tech.github.io/moonlab-helm
+helm install homepage moonlab/homepage -f my-values.yaml
 ```
 
-### Method 3: With custom values
+### Method 3: With specific namespace
 ```bash
-helm install homepage ./homepage-helm-chart -f my-values.yaml
+helm repo add moonlab https://moonlab-tech.github.io/moonlab-helm
+helm install homepage moonlab/homepage --namespace my-namespace --create-namespace
 ```
 
 ## Customization
@@ -96,10 +99,10 @@ Based on the official Homepage Kubernetes manifests from:
 https://gethomepage.dev/installation/k8s/
 
 ## Next Steps
-1. Customize `values.yaml` for your environment
-2. Run `./install.sh --dry-run` to preview changes
-3. Deploy with `./install.sh` or `helm install`
+1. Add the MoonLab Helm repository: `helm repo add moonlab https://moonlab-tech.github.io/moonlab-helm`
+2. Run `helm install homepage moonlab/homepage --dry-run` to preview changes
+3. Deploy with `helm install homepage moonlab/homepage`
 4. Access Homepage via ingress or port-forward
-5. Customize configuration through the ConfigMap
+5. Customize configuration through values files or ConfigMaps
 
 The chart is ready for production use and follows Helm best practices for maintainability and upgradability.
