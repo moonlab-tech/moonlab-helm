@@ -39,9 +39,13 @@ securityContext: {}
 service:
   type: ClusterIP
   port: 3000
+  # LoadBalancer IP (only used when type is LoadBalancer)
+  loadBalancerIP: ""
+  # Service annotations
+  annotations: {}
 
 ingress:
-  enabled: true
+  enabled: false
   className: ""
   annotations:
     gethomepage.dev/description: "Dynamically Detected Homepage"
