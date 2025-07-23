@@ -27,10 +27,10 @@ jobs:
       - name: Update README badge
         run: |
           # Create the badge URL
-          BADGE_URL="https://img.shields.io/badge/homepage-${{ steps.get_version.outputs.version }}-blue"
+          BADGE_URL="https://img.shields.io/badge/homepage-${{ steps.get_version.outputs.version }}-green"
           
           # Update the README.md file
-          sed -i "s|https://img.shields.io/badge/homepage-[^-]*-blue|$BADGE_URL|g" README.md
+          sed -i "s|https://img.shields.io/badge/homepage-[^-]*-green|$BADGE_URL|g" README.md
           
           echo "Updated badge URL to: $BADGE_URL"
 
