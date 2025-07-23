@@ -40,33 +40,25 @@ jobs:
           while read -r chart; do
             echo "::notice::Checking chart: $chart"
             
-            # Get old version with error handling
-            old_version=""
+            # Simple approach: if Chart.yaml was modified, consider it a version change
+            echo "::notice::Chart.yaml file was modified, treating as version change"
+            changed_charts+=("$chart")
+            
+            # Also try to get actual versions for debugging
             if git show "$source_sha":"charts/$chart/Chart.yaml" > /dev/null 2>&1; then
-              old_version="$(git show "$source_sha":"charts/$chart/Chart.yaml" | yq '.version' 2>/dev/null || echo '')"
+              old_version="$(git show "$source_sha":"charts/$chart/Chart.yaml" | grep '^version:' | cut -d' ' -f2 | tr -d '"' || echo 'unknown')"
+            else
+              old_version="new-chart"
             fi
             
-            # Get new version
-            new_version="$(yq '.version' "charts/$chart/Chart.yaml" 2>/dev/null || echo '')"
+            new_version="$(grep '^version:' "charts/$chart/Chart.yaml" | cut -d' ' -f2 | tr -d '"' || echo 'unknown')"
             
             echo "::notice::Old version: '$old_version', New version: '$new_version'"
-            
-            # If either version is empty, or they're different, consider it changed
-            if [[ -z "$old_version" ]] || [[ -z "$new_version" ]] || [[ "$old_version" != "$new_version" ]]; then
-              echo "::notice::Chart '$chart' has changed from version '$old_version' to '$new_version'"
-              changed_charts+=("$chart")
-            fi
           done < <(echo -n "$changed")
           
           if [ ${#changed_charts[@]} -eq 0 ]; then
-              # If no version changes detected but Chart.yaml files were modified, force a release
-              if [[ -n "$changed" ]]; then
-                  echo "::notice::Chart.yaml files modified but version comparison failed, forcing release"
-                  echo "has_changes=true" >> $GITHUB_OUTPUT
-              else
-                  echo "::notice::No chart versions changed, skipping release"
-                  echo "has_changes=false" >> $GITHUB_OUTPUT
-              fi
+              echo "::notice::No chart versions changed, skipping release"
+              echo "has_changes=false" >> $GITHUB_OUTPUT
           else
               echo "::notice::Found ${#changed_charts[@]} chart(s) with version changes"
               echo "has_changes=true" >> $GITHUB_OUTPUT
