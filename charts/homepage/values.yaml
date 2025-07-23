@@ -43,6 +43,10 @@ service:
   loadBalancerIP: ""
   # Service annotations
   annotations: {}
+  # External traffic policy (Local, Cluster)
+  externalTrafficPolicy: ""
+  # Internal traffic policy (Local, Cluster)
+  internalTrafficPolicy: ""
 
 ingress:
   enabled: false
