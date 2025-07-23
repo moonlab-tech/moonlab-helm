@@ -5,92 +5,52 @@ on:
     branches:
       - main
 
-permissions:
-  contents: write
-  packages: write
-
 jobs:
   release:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
-      - name: Install yq
-        run: |
-          wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/local/bin/yq
-          chmod +x /usr/local/bin/yq
-
-      - name: Check for chart version changes
-        id: check_changes
+      # https://github.com/helm/chart-releaser-action/issues/209
+      - name: Abort If No Chart Versions Changed
         run: |
           target_sha="${{ github.sha }}" # current commit
           source_sha=`git rev-parse ${target_sha}^` # previous commit
-          echo "::notice::Current commit: $target_sha"
-          echo "::notice::Previous commit: $source_sha"
-          
           # get the list of charts that have changed
           changed="$(git diff --name-only --diff-filter=ACMRT "$source_sha" "$target_sha" -- "charts/*/Chart.yaml" | cut -d '/' -f 2)"
-          echo "::notice::Changed Chart.yaml files: $changed"
 
           # check if the PR has modified any chart versions
+          # prevent https://www.shellcheck.net/wiki/SC2030 using '<<<' to read into an array
           changed_charts=()
           while read -r chart; do
-            echo "::notice::Checking chart: $chart"
-            
-            # Simple approach: if Chart.yaml was modified, consider it a version change
-            echo "::notice::Chart.yaml file was modified, treating as version change"
-            changed_charts+=("$chart")
-            
-            # Also try to get actual versions for debugging
-            if git show "$source_sha":"charts/$chart/Chart.yaml" > /dev/null 2>&1; then
-              old_version="$(git show "$source_sha":"charts/$chart/Chart.yaml" | grep '^version:' | cut -d' ' -f2 | tr -d '"' || echo 'unknown')"
-            else
-              old_version="new-chart"
+            old_version="$(git show "$source_sha":"charts/$chart/Chart.yaml" | yq '.version')"
+            new_version="$(yq '.version' "charts/$chart/Chart.yaml")"
+            if [[ "$old_version" != "$new_version" ]]; then
+              echo "::notice::Chart '$chart' has changed from version $old_version to $new_version"
+              changed_charts+=("$chart")
             fi
-            
-            new_version="$(grep '^version:' "charts/$chart/Chart.yaml" | cut -d' ' -f2 | tr -d '"' || echo 'unknown')"
-            
-            echo "::notice::Old version: '$old_version', New version: '$new_version'"
           done < <(echo -n "$changed")
-          
-          if [ ${#changed_charts[@]} -eq 0 ]; then
-              echo "::notice::No chart versions changed, skipping release"
-              echo "has_changes=false" >> $GITHUB_OUTPUT
+          if [ -z $changed ]; then
+              exit 1
           else
-              echo "::notice::Found ${#changed_charts[@]} chart(s) with version changes"
-              echo "has_changes=true" >> $GITHUB_OUTPUT
+              exit 0
           fi
 
       - name: Configure Git
         run: |
           git config user.name "$GITHUB_ACTOR"
           git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
-      
-      - name: Create gh-pages branch if it doesn't exist
-        run: |
-          if ! git ls-remote --heads origin gh-pages | grep gh-pages > /dev/null; then
-            git checkout --orphan gh-pages
-            git rm -rf .
-            echo "# Helm Charts Repository" > index.html
-            git add index.html
-            git commit -m "Initial gh-pages branch"
-            git push origin gh-pages
-            git checkout main
-          fi
-      
       - name: Install Helm
         uses: azure/setup-helm@v1
         with:
           version: v3.8.1
 
       - name: Run chart-releaser
-        if: steps.check_changes.outputs.has_changes == 'true'
         uses: helm/chart-releaser-action@v1.7.0
         with:
           skip_existing: true
-          push: true
         env:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
