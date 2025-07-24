@@ -74,9 +74,12 @@ The command removes all the Kubernetes components associated with the chart and 
 
 ### Homepage RBAC parameters
 
-| Name          | Description                                          | Value  |
-| ------------- | ---------------------------------------------------- | ------ |
-| `rbac.create` | Specifies whether RBAC resources should be created  | `true` |
+| Name                        | Description                                          | Value  |
+| --------------------------- | ---------------------------------------------------- | ------ |
+| `rbac.create`               | Specifies whether RBAC resources should be created  | `true` |
+| `rbac.additionalRules`      | Additional RBAC rules to append to the default role | `[]`   |
+| `rbac.existingClusterRole`  | Use existing ClusterRole instead of creating new one | `""`   |
+| `rbac.existingClusterRoleBinding` | Use existing ClusterRoleBinding instead of creating new one | `""`   |
 
 ### Homepage Service parameters
 
@@ -264,6 +267,64 @@ kubectl create configmap homepage-custom-js-config --from-file=custom.js
 ```
 
 You can also mix and match - specify only some files to use separate ConfigMaps while others fall back to the main ConfigMap or default values.
+
+### RBAC Configuration
+
+The chart creates a ClusterRole with basic permissions for Homepage functionality. You can extend these permissions in several ways:
+
+#### Adding Custom Permissions
+
+To add additional permissions (e.g., for restarting deployments):
+
+```yaml
+rbac:
+  additionalRules:
+    - apiGroups: ["apps"]
+      resources: ["deployments"]
+      verbs: ["get", "list", "patch", "update"]
+    - apiGroups: ["apps"]
+      resources: ["deployments/restart"]
+      verbs: ["patch"]
+    - apiGroups: ["apps"]
+      resources: ["replicasets"]
+      verbs: ["get", "list"]
+    - apiGroups: [""]
+      resources: ["events"]
+      verbs: ["get", "list", "watch"]
+```
+
+#### Using Existing RBAC Resources
+
+If you have existing ClusterRole and ClusterRoleBinding:
+
+```yaml
+rbac:
+  create: true
+  existingClusterRole: "my-custom-cluster-role"
+  existingClusterRoleBinding: "my-custom-cluster-role-binding"
+```
+
+#### Disabling RBAC
+
+To disable RBAC entirely:
+
+```yaml
+rbac:
+  create: false
+```
+
+#### Example Configurations
+
+See the `examples/` directory for pre-configured values files:
+
+- `examples/deployment-restart-values.yaml` - Basic deployment restart permissions
+- `examples/rbac-enhanced-values.yaml` - Comprehensive RBAC permissions for cluster management
+
+Install with example configuration:
+
+```bash
+helm install homepage moonlab/homepage -f examples/deployment-restart-values.yaml
+```
 
 ### Persistence
 

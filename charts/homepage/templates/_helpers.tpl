@@ -109,3 +109,14 @@ false
 true
 {{- end -}}
 {{- end }}
+
+{{/*
+Get the ClusterRole name to use
+*/}}
+{{- define "homepage.clusterRoleName" -}}
+{{- if .Values.rbac.existingClusterRole }}
+{{- .Values.rbac.existingClusterRole }}
+{{- else }}
+{{- include "homepage.fullname" . }}
+{{- end }}
+{{- end }}

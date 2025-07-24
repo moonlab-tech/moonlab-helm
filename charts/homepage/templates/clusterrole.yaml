@@ -1,4 +1,4 @@
-{{- if .Values.rbac.create -}}
+{{- if and .Values.rbac.create (not .Values.rbac.existingClusterRole) -}}
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -6,6 +6,7 @@ metadata:
   labels:
     {{- include "homepage.labels" . | nindent 4 }}
 rules:
+  # Default rules for Homepage functionality
   - apiGroups:
       - ""
     resources:
@@ -46,4 +47,8 @@ rules:
     verbs:
       - get
       - list
+  {{- with .Values.rbac.additionalRules }}
+  # Additional custom rules
+  {{- toYaml . | nindent 2 }}
+  {{- end }}
 {{- end }}

@@ -108,6 +108,39 @@ envFrom: []
 # RBAC configuration
 rbac:
   create: true
+  # Additional rules to append to the default ClusterRole
+  additionalRules: []
+  # Example additional rules for deployment management:
+  # additionalRules:
+  #   # Allow restarting deployments
+  #   - apiGroups: ["apps"]
+  #     resources: ["deployments"]
+  #     verbs: ["get", "list", "patch", "update"]
+  #   - apiGroups: ["apps"]
+  #     resources: ["deployments/restart"]
+  #     verbs: ["patch"]
+  #   # Allow managing replicasets
+  #   - apiGroups: ["apps"]
+  #     resources: ["replicasets"]
+  #     verbs: ["get", "list"]
+  #   # Allow viewing events
+  #   - apiGroups: [""]
+  #     resources: ["events"]
+  #     verbs: ["get", "list", "watch"]
+  #   # Allow managing services
+  #   - apiGroups: [""]
+  #     resources: ["services"]
+  #     verbs: ["get", "list", "patch", "update"]
+  #   # Allow managing configmaps
+  #   - apiGroups: [""]
+  #     resources: ["configmaps"]
+  #     verbs: ["get", "list", "patch", "update"]
+  
+  # Use existing ClusterRole instead of creating a new one
+  existingClusterRole: ""
+  
+  # Use existing ClusterRoleBinding instead of creating a new one
+  existingClusterRoleBinding: ""
 
 # Configuration files
 config:
