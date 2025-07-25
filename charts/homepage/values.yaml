@@ -152,6 +152,7 @@ config:
   # Use existing ConfigMaps for specific files
   # Leave empty to use default values from the chart
   # Note: ConfigMaps must contain the file with the correct key (e.g., "settings.yaml")
+  existingConfigMap: ""
   existingConfigMaps:
     kubernetes: ""      # e.g., "my-kubernetes-config"
     settings: ""        # e.g., "my-settings-config"
