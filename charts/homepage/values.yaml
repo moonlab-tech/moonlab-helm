@@ -239,14 +239,6 @@ config:
 
   # Docker configuration (empty by default)
   docker: |
-    # Docker configuration
-    # Uncomment and configure your Docker hosts below:
-    # - name: "My Docker Host"
-    #   url: "http://docker-host:9000"
-    #   icon: "mdi:docker"
-    #   username: "admin"
-    #   password: "password"
-    []
 
 # Persistence
 persistence:

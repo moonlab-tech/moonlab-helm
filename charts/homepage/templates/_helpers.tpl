@@ -103,7 +103,9 @@ Returns true if we need to create a ConfigMap with default values
 {{- $hasAnyExternalConfigMaps = true -}}
 {{- end -}}
 {{- end -}}
-{{- if and $hasExistingConfigMap (not $hasAnyExternalConfigMaps) -}}
+{{- if $hasExistingConfigMap -}}
+false
+{{- else if $hasAnyExternalConfigMaps -}}
 false
 {{- else -}}
 true
