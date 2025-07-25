@@ -65,11 +65,7 @@ Create the name of the service account to use
 Get the name of the ConfigMap to use
 */}}
 {{- define "homepage.configMapName" -}}
-{{- if .Values.config.existingConfigMap }}
-{{- .Values.config.existingConfigMap }}
-{{- else }}
 {{- include "homepage.fullname" . }}
-{{- end }}
 {{- end }}
 
 {{/*
