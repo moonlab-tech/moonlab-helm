@@ -54,30 +54,8 @@ spec:
               containerPort: 3000
               protocol: TCP
           volumeMounts:
-            - mountPath: /app/config/custom.js
+            - mountPath: /app/config
               name: config-main
-              subPath: custom.js
-            - mountPath: /app/config/custom.css
-              name: config-main
-              subPath: custom.css
-            - mountPath: /app/config/bookmarks.yaml
-              name: config-main
-              subPath: bookmarks.yaml
-            - mountPath: /app/config/docker.yaml
-              name: config-main
-              subPath: docker.yaml
-            - mountPath: /app/config/kubernetes.yaml
-              name: config-main
-              subPath: kubernetes.yaml
-            - mountPath: /app/config/services.yaml
-              name: config-main
-              subPath: services.yaml
-            - mountPath: /app/config/settings.yaml
-              name: config-main
-              subPath: settings.yaml
-            - mountPath: /app/config/widgets.yaml
-              name: config-main
-              subPath: widgets.yaml
             - mountPath: /app/config/logs
               name: logs
           resources:
