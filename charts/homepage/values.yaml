@@ -172,18 +172,22 @@ config:
     # gateway: true # enable gateway-api
 
   # Settings configuration (empty by default)
-  settings: ""
-  # Example settings:
-  # settings: |
-  #   providers:
-  #     longhorn:
-  #       url: https://longhorn.my.network
+  settings: |
+    # Settings configuration
+    # Example:
+    # providers:
+    #   longhorn:
+    #     url: https://longhorn.my.network
 
   # Custom CSS
-  customCss: ""
+  customCss: |
+    /* Custom CSS */
+    /* Add your custom styles here */
 
   # Custom JS
-  customJs: ""
+  customJs: |
+    // Custom JavaScript
+    // Add your custom scripts here
 
   # Bookmarks configuration
   bookmarks: |
@@ -236,10 +240,13 @@ config:
   # Docker configuration (empty by default)
   docker: |
     # Docker configuration
-    # Example:
+    # Uncomment and configure your Docker hosts below:
     # - name: "My Docker Host"
     #   url: "http://docker-host:9000"
     #   icon: "mdi:docker"
+    #   username: "admin"
+    #   password: "password"
+    []
 
 # Persistence
 persistence:
