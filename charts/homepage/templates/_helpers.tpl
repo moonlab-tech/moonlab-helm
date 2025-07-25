@@ -79,25 +79,11 @@ Usage: {{ include "homepage.configMapNameForFile" (dict "context" . "file" "kube
 {{- index $context.Values.config.existingConfigMaps $file }}
 {{- else if $context.Values.config.existingConfigMap }}
 {{- $context.Values.config.existingConfigMap }}
-{{- else if eq (include "homepage.shouldCreateConfigMap" $context) "true" }}
-{{- include "homepage.fullname" $context }}
 {{- else }}
 {{- printf "%s-%s" (include "homepage.fullname" $context) $file }}
 {{- end }}
 {{- end }}
 
-{{/*
-Check if we should create the main ConfigMap
-Returns true if we need to create a ConfigMap for any files that don't have external ConfigMaps
-*/}}
-{{- define "homepage.shouldCreateConfigMap" -}}
-{{- $hasExistingConfigMap := .Values.config.existingConfigMap -}}
-{{- if $hasExistingConfigMap -}}
-false
-{{- else -}}
-true
-{{- end -}}
-{{- end }}
 
 {{/*
 Get the ClusterRole name to use

@@ -1,4 +1,3 @@
-{{- if eq (include "homepage.shouldCreateConfigMap" .) "true" }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -254,5 +253,4 @@ data:
 {{ $combinedDocker | indent 4 }}
 {{- else }}
 {{ .Values.config.docker | indent 4 }}
-{{- end }}
 {{- end }}
