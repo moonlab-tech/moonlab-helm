@@ -20,7 +20,7 @@ You can then run `helm search repo moonlab` to search the charts.
 
 | Chart | Description | Version |
 |-------|-------------|---------|
-| [homepage](charts/homepage/) | A highly customizable homepage dashboard | ![Version](https://img.shields.io/badge/homepage-1.3.4-success) |
+| [homepage](charts/homepage/) | A highly customizable homepage dashboard | ![Version](https://img.shields.io/badge/homepage-1.3.5-success) |
 
 ## License
 
