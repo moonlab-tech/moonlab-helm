@@ -36,6 +36,7 @@ data:
 {{ .Values.config.widgets | indent 4 }}
 {{- end }}
 {{- if not (index .Values.config.existingConfigMaps "docker") }}
-  docker.yaml: {{ .Values.config.docker | quote }}
+  docker.yaml: |
+{{ .Values.config.docker | indent 4 }}
 {{- end }}
 {{- end }}
