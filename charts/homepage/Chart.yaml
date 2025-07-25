@@ -3,7 +3,7 @@ description: A Helm chart for Homepage - A highly customizable homepage (or star
 icon: https://raw.githubusercontent.com/gethomepage/homepage/main/public/icon.png
 type: application
 name: homepage
-version: 1.3.18
+version: 1.3.19
 appVersion: "v1.4.0"
 home: https://gethomepage.dev/
 sources:

@@ -234,7 +234,8 @@ config:
         target: _blank
 
   # Docker configuration (empty by default)
-  docker: ""
+  docker: |
+    # Docker configuration
 
 # Persistence
 persistence:
