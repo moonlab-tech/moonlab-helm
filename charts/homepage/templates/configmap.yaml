@@ -8,131 +8,251 @@ metadata:
     {{- include "homepage.labels" . | nindent 4 }}
 data:
   kubernetes.yaml: |
+{{- /* Handle kubernetes combining logic */ -}}
+{{- $combinedKubernetes := "" }}
+{{- /* First, try to get kubernetes from existingConfigMap */ -}}
+{{- if .Values.config.existingConfigMap }}
+{{- $mainConfigMap := (lookup "v1" "ConfigMap" .Release.Namespace .Values.config.existingConfigMap) }}
+{{- if $mainConfigMap }}
+{{- if (index $mainConfigMap.data "kubernetes.yaml") }}
+{{- $combinedKubernetes = index $mainConfigMap.data "kubernetes.yaml" }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- /* Then, try to get kubernetes from existingConfigMaps.kubernetes and combine */ -}}
 {{- if .Values.config.existingConfigMaps.kubernetes }}
-{{- $configMapName := .Values.config.existingConfigMaps.kubernetes }}
-{{- $configMap := (lookup "v1" "ConfigMap" .Release.Namespace $configMapName) }}
-{{- if $configMap }}
-{{- if (index $configMap.data "kubernetes.yaml") }}
-{{ index $configMap.data "kubernetes.yaml" | indent 4 }}
+{{- $kubernetesConfigMap := (lookup "v1" "ConfigMap" .Release.Namespace .Values.config.existingConfigMaps.kubernetes) }}
+{{- if $kubernetesConfigMap }}
+{{- if (index $kubernetesConfigMap.data "kubernetes.yaml") }}
+{{- if $combinedKubernetes }}
+{{- $combinedKubernetes = printf "%s\n%s" $combinedKubernetes (index $kubernetesConfigMap.data "kubernetes.yaml") }}
 {{- else }}
-{{ .Values.config.kubernetes | indent 4 }}
+{{- $combinedKubernetes = index $kubernetesConfigMap.data "kubernetes.yaml" }}
 {{- end }}
-{{- else }}
-{{ .Values.config.kubernetes | indent 4 }}
 {{- end }}
+{{- end }}
+{{- end }}
+{{- /* Output the combined kubernetes or fallback to default */ -}}
+{{- if $combinedKubernetes }}
+{{ $combinedKubernetes | indent 4 }}
 {{- else }}
 {{ .Values.config.kubernetes | indent 4 }}
 {{- end }}
   settings.yaml: |
+{{- /* Handle settings combining logic */ -}}
+{{- $combinedSettings := "" }}
+{{- /* First, try to get settings from existingConfigMap */ -}}
+{{- if .Values.config.existingConfigMap }}
+{{- $mainConfigMap := (lookup "v1" "ConfigMap" .Release.Namespace .Values.config.existingConfigMap) }}
+{{- if $mainConfigMap }}
+{{- if (index $mainConfigMap.data "settings.yaml") }}
+{{- $combinedSettings = index $mainConfigMap.data "settings.yaml" }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- /* Then, try to get settings from existingConfigMaps.settings and combine */ -}}
 {{- if .Values.config.existingConfigMaps.settings }}
-{{- $configMapName := .Values.config.existingConfigMaps.settings }}
-{{- $configMap := (lookup "v1" "ConfigMap" .Release.Namespace $configMapName) }}
-{{- if $configMap }}
-{{- if (index $configMap.data "settings.yaml") }}
-{{ index $configMap.data "settings.yaml" | indent 4 }}
+{{- $settingsConfigMap := (lookup "v1" "ConfigMap" .Release.Namespace .Values.config.existingConfigMaps.settings) }}
+{{- if $settingsConfigMap }}
+{{- if (index $settingsConfigMap.data "settings.yaml") }}
+{{- if $combinedSettings }}
+{{- $combinedSettings = printf "%s\n%s" $combinedSettings (index $settingsConfigMap.data "settings.yaml") }}
 {{- else }}
-{{ .Values.config.settings | indent 4 }}
+{{- $combinedSettings = index $settingsConfigMap.data "settings.yaml" }}
 {{- end }}
-{{- else }}
-{{ .Values.config.settings | indent 4 }}
 {{- end }}
+{{- end }}
+{{- end }}
+{{- /* Output the combined settings or fallback to default */ -}}
+{{- if $combinedSettings }}
+{{ $combinedSettings | indent 4 }}
 {{- else }}
 {{ .Values.config.settings | indent 4 }}
 {{- end }}
   custom.css: |
+{{- /* Handle custom.css combining logic */ -}}
+{{- $combinedCustomCss := "" }}
+{{- /* First, try to get custom.css from existingConfigMap */ -}}
+{{- if .Values.config.existingConfigMap }}
+{{- $mainConfigMap := (lookup "v1" "ConfigMap" .Release.Namespace .Values.config.existingConfigMap) }}
+{{- if $mainConfigMap }}
+{{- if (index $mainConfigMap.data "custom.css") }}
+{{- $combinedCustomCss = index $mainConfigMap.data "custom.css" }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- /* Then, try to get custom.css from existingConfigMaps.customCss and combine */ -}}
 {{- if .Values.config.existingConfigMaps.customCss }}
-{{- $configMapName := .Values.config.existingConfigMaps.customCss }}
-{{- $configMap := (lookup "v1" "ConfigMap" .Release.Namespace $configMapName) }}
-{{- if $configMap }}
-{{- if (index $configMap.data "custom.css") }}
-{{ index $configMap.data "custom.css" | indent 4 }}
+{{- $customCssConfigMap := (lookup "v1" "ConfigMap" .Release.Namespace .Values.config.existingConfigMaps.customCss) }}
+{{- if $customCssConfigMap }}
+{{- if (index $customCssConfigMap.data "custom.css") }}
+{{- if $combinedCustomCss }}
+{{- $combinedCustomCss = printf "%s\n%s" $combinedCustomCss (index $customCssConfigMap.data "custom.css") }}
 {{- else }}
-{{ .Values.config.customCss | indent 4 }}
+{{- $combinedCustomCss = index $customCssConfigMap.data "custom.css" }}
 {{- end }}
-{{- else }}
-{{ .Values.config.customCss | indent 4 }}
 {{- end }}
+{{- end }}
+{{- end }}
+{{- /* Output the combined custom.css or fallback to default */ -}}
+{{- if $combinedCustomCss }}
+{{ $combinedCustomCss | indent 4 }}
 {{- else }}
 {{ .Values.config.customCss | indent 4 }}
 {{- end }}
   custom.js: |
+{{- /* Handle custom.js combining logic */ -}}
+{{- $combinedCustomJs := "" }}
+{{- /* First, try to get custom.js from existingConfigMap */ -}}
+{{- if .Values.config.existingConfigMap }}
+{{- $mainConfigMap := (lookup "v1" "ConfigMap" .Release.Namespace .Values.config.existingConfigMap) }}
+{{- if $mainConfigMap }}
+{{- if (index $mainConfigMap.data "custom.js") }}
+{{- $combinedCustomJs = index $mainConfigMap.data "custom.js" }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- /* Then, try to get custom.js from existingConfigMaps.customJs and combine */ -}}
 {{- if .Values.config.existingConfigMaps.customJs }}
-{{- $configMapName := .Values.config.existingConfigMaps.customJs }}
-{{- $configMap := (lookup "v1" "ConfigMap" .Release.Namespace $configMapName) }}
-{{- if $configMap }}
-{{- if (index $configMap.data "custom.js") }}
-{{ index $configMap.data "custom.js" | indent 4 }}
+{{- $customJsConfigMap := (lookup "v1" "ConfigMap" .Release.Namespace .Values.config.existingConfigMaps.customJs) }}
+{{- if $customJsConfigMap }}
+{{- if (index $customJsConfigMap.data "custom.js") }}
+{{- if $combinedCustomJs }}
+{{- $combinedCustomJs = printf "%s\n%s" $combinedCustomJs (index $customJsConfigMap.data "custom.js") }}
 {{- else }}
-{{ .Values.config.customJs | indent 4 }}
+{{- $combinedCustomJs = index $customJsConfigMap.data "custom.js" }}
 {{- end }}
-{{- else }}
-{{ .Values.config.customJs | indent 4 }}
 {{- end }}
+{{- end }}
+{{- end }}
+{{- /* Output the combined custom.js or fallback to default */ -}}
+{{- if $combinedCustomJs }}
+{{ $combinedCustomJs | indent 4 }}
 {{- else }}
 {{ .Values.config.customJs | indent 4 }}
 {{- end }}
   bookmarks.yaml: |
+{{- /* Handle bookmarks combining logic */ -}}
+{{- $combinedBookmarks := "" }}
+{{- /* First, try to get bookmarks from existingConfigMap */ -}}
+{{- if .Values.config.existingConfigMap }}
+{{- $mainConfigMap := (lookup "v1" "ConfigMap" .Release.Namespace .Values.config.existingConfigMap) }}
+{{- if $mainConfigMap }}
+{{- if (index $mainConfigMap.data "bookmarks.yaml") }}
+{{- $combinedBookmarks = index $mainConfigMap.data "bookmarks.yaml" }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- /* Then, try to get bookmarks from existingConfigMaps.bookmarks and combine */ -}}
 {{- if .Values.config.existingConfigMaps.bookmarks }}
-{{- $configMapName := .Values.config.existingConfigMaps.bookmarks }}
-{{- $configMap := (lookup "v1" "ConfigMap" .Release.Namespace $configMapName) }}
-{{- if $configMap }}
-{{- if (index $configMap.data "bookmarks.yaml") }}
-{{ index $configMap.data "bookmarks.yaml" | indent 4 }}
+{{- $bookmarksConfigMap := (lookup "v1" "ConfigMap" .Release.Namespace .Values.config.existingConfigMaps.bookmarks) }}
+{{- if $bookmarksConfigMap }}
+{{- if (index $bookmarksConfigMap.data "bookmarks.yaml") }}
+{{- if $combinedBookmarks }}
+{{- $combinedBookmarks = printf "%s\n%s" $combinedBookmarks (index $bookmarksConfigMap.data "bookmarks.yaml") }}
 {{- else }}
-{{ .Values.config.bookmarks | indent 4 }}
+{{- $combinedBookmarks = index $bookmarksConfigMap.data "bookmarks.yaml" }}
 {{- end }}
-{{- else }}
-{{ .Values.config.bookmarks | indent 4 }}
 {{- end }}
+{{- end }}
+{{- end }}
+{{- /* Output the combined bookmarks or fallback to default */ -}}
+{{- if $combinedBookmarks }}
+{{ $combinedBookmarks | indent 4 }}
 {{- else }}
 {{ .Values.config.bookmarks | indent 4 }}
 {{- end }}
   services.yaml: |
+{{- /* Handle services combining logic */ -}}
+{{- $combinedServices := "" }}
+{{- /* First, try to get services from existingConfigMap */ -}}
+{{- if .Values.config.existingConfigMap }}
+{{- $mainConfigMap := (lookup "v1" "ConfigMap" .Release.Namespace .Values.config.existingConfigMap) }}
+{{- if $mainConfigMap }}
+{{- if (index $mainConfigMap.data "services.yaml") }}
+{{- $combinedServices = index $mainConfigMap.data "services.yaml" }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- /* Then, try to get services from existingConfigMaps.services and combine */ -}}
 {{- if .Values.config.existingConfigMaps.services }}
-{{- $configMapName := .Values.config.existingConfigMaps.services }}
-{{- $configMap := (lookup "v1" "ConfigMap" .Release.Namespace $configMapName) }}
-{{- if $configMap }}
-{{- if (index $configMap.data "services.yaml") }}
-{{ index $configMap.data "services.yaml" | indent 4 }}
+{{- $servicesConfigMap := (lookup "v1" "ConfigMap" .Release.Namespace .Values.config.existingConfigMaps.services) }}
+{{- if $servicesConfigMap }}
+{{- if (index $servicesConfigMap.data "services.yaml") }}
+{{- if $combinedServices }}
+{{- $combinedServices = printf "%s\n%s" $combinedServices (index $servicesConfigMap.data "services.yaml") }}
 {{- else }}
-{{ .Values.config.services | indent 4 }}
+{{- $combinedServices = index $servicesConfigMap.data "services.yaml" }}
 {{- end }}
-{{- else }}
-{{ .Values.config.services | indent 4 }}
 {{- end }}
+{{- end }}
+{{- end }}
+{{- /* Output the combined services or fallback to default */ -}}
+{{- if $combinedServices }}
+{{ $combinedServices | indent 4 }}
 {{- else }}
 {{ .Values.config.services | indent 4 }}
 {{- end }}
   widgets.yaml: |
+{{- /* Handle widgets combining logic */ -}}
+{{- $combinedWidgets := "" }}
+{{- /* First, try to get widgets from existingConfigMap */ -}}
+{{- if .Values.config.existingConfigMap }}
+{{- $mainConfigMap := (lookup "v1" "ConfigMap" .Release.Namespace .Values.config.existingConfigMap) }}
+{{- if $mainConfigMap }}
+{{- if (index $mainConfigMap.data "widgets.yaml") }}
+{{- $combinedWidgets = index $mainConfigMap.data "widgets.yaml" }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- /* Then, try to get widgets from existingConfigMaps.widgets and combine */ -}}
 {{- if .Values.config.existingConfigMaps.widgets }}
-{{- $configMapName := .Values.config.existingConfigMaps.widgets }}
-{{- $configMap := (lookup "v1" "ConfigMap" .Release.Namespace $configMapName) }}
-{{- if $configMap }}
-{{- if (index $configMap.data "widgets.yaml") }}
-{{ index $configMap.data "widgets.yaml" | indent 4 }}
+{{- $widgetsConfigMap := (lookup "v1" "ConfigMap" .Release.Namespace .Values.config.existingConfigMaps.widgets) }}
+{{- if $widgetsConfigMap }}
+{{- if (index $widgetsConfigMap.data "widgets.yaml") }}
+{{- if $combinedWidgets }}
+{{- $combinedWidgets = printf "%s\n%s" $combinedWidgets (index $widgetsConfigMap.data "widgets.yaml") }}
 {{- else }}
-{{ .Values.config.widgets | indent 4 }}
+{{- $combinedWidgets = index $widgetsConfigMap.data "widgets.yaml" }}
 {{- end }}
-{{- else }}
-{{ .Values.config.widgets | indent 4 }}
 {{- end }}
+{{- end }}
+{{- end }}
+{{- /* Output the combined widgets or fallback to default */ -}}
+{{- if $combinedWidgets }}
+{{ $combinedWidgets | indent 4 }}
 {{- else }}
 {{ .Values.config.widgets | indent 4 }}
 {{- end }}
   docker.yaml: |
+{{- /* Handle docker combining logic */ -}}
+{{- $combinedDocker := "" }}
+{{- /* First, try to get docker from existingConfigMap */ -}}
+{{- if .Values.config.existingConfigMap }}
+{{- $mainConfigMap := (lookup "v1" "ConfigMap" .Release.Namespace .Values.config.existingConfigMap) }}
+{{- if $mainConfigMap }}
+{{- if (index $mainConfigMap.data "docker.yaml") }}
+{{- $combinedDocker = index $mainConfigMap.data "docker.yaml" }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- /* Then, try to get docker from existingConfigMaps.docker and combine */ -}}
 {{- if .Values.config.existingConfigMaps.docker }}
-{{- $configMapName := .Values.config.existingConfigMaps.docker }}
-{{- $configMap := (lookup "v1" "ConfigMap" .Release.Namespace $configMapName) }}
-{{- if $configMap }}
-{{- if (index $configMap.data "docker.yaml") }}
-{{ index $configMap.data "docker.yaml" | indent 4 }}
+{{- $dockerConfigMap := (lookup "v1" "ConfigMap" .Release.Namespace .Values.config.existingConfigMaps.docker) }}
+{{- if $dockerConfigMap }}
+{{- if (index $dockerConfigMap.data "docker.yaml") }}
+{{- if $combinedDocker }}
+{{- $combinedDocker = printf "%s\n%s" $combinedDocker (index $dockerConfigMap.data "docker.yaml") }}
+{{- else }}
+{{- $combinedDocker = index $dockerConfigMap.data "docker.yaml" }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- /* Output the combined docker or fallback to default */ -}}
+{{- if $combinedDocker }}
+{{ $combinedDocker | indent 4 }}
 {{- else }}
 {{ .Values.config.docker | indent 4 }}
 {{- end }}
-{{- else }}
-{{ .Values.config.docker | indent 4 }}
 {{- end }}
-{{- else }}
-{{ .Values.config.docker | indent 4 }}
-{{- end }}
-{{- end }} 
