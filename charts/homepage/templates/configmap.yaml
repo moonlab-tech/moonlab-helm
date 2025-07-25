@@ -10,33 +10,144 @@ data:
 {{- if not (index .Values.config.existingConfigMaps "kubernetes") }}
   kubernetes.yaml: |
 {{ .Values.config.kubernetes | indent 4 }}
+{{- else }}
+  kubernetes.yaml: |
+{{- $configMapName := index .Values.config.existingConfigMaps "kubernetes" }}
+{{- $configMap := (lookup "v1" "ConfigMap" .Release.Namespace $configMapName) }}
+{{- if $configMap }}
+{{- if (index $configMap.data "kubernetes.yaml") }}
+{{ index $configMap.data "kubernetes.yaml" | indent 4 }}
+{{- else }}
+{{ .Values.config.kubernetes | indent 4 }}
 {{- end }}
+{{- else }}
+{{ .Values.config.kubernetes | indent 4 }}
+{{- end }}
+{{- end }}
+
 {{- if not (index .Values.config.existingConfigMaps "settings") }}
   settings.yaml: |
 {{ .Values.config.settings | indent 4 }}
+{{- else }}
+  settings.yaml: |
+{{- $configMapName := index .Values.config.existingConfigMaps "settings" }}
+{{- $configMap := (lookup "v1" "ConfigMap" .Release.Namespace $configMapName) }}
+{{- if $configMap }}
+{{- if (index $configMap.data "settings.yaml") }}
+{{ index $configMap.data "settings.yaml" | indent 4 }}
+{{- else }}
+{{ .Values.config.settings | indent 4 }}
 {{- end }}
+{{- else }}
+{{ .Values.config.settings | indent 4 }}
+{{- end }}
+{{- end }}
+
 {{- if not (index .Values.config.existingConfigMaps "bookmarks") }}
   bookmarks.yaml: |
 {{ .Values.config.bookmarks | indent 4 }}
+{{- else }}
+  bookmarks.yaml: |
+{{- $configMapName := index .Values.config.existingConfigMaps "bookmarks" }}
+{{- $configMap := (lookup "v1" "ConfigMap" .Release.Namespace $configMapName) }}
+{{- if $configMap }}
+{{- if (index $configMap.data "bookmarks.yaml") }}
+{{ index $configMap.data "bookmarks.yaml" | indent 4 }}
+{{- else }}
+{{ .Values.config.bookmarks | indent 4 }}
 {{- end }}
+{{- else }}
+{{ .Values.config.bookmarks | indent 4 }}
+{{- end }}
+{{- end }}
+
 {{- if not (index .Values.config.existingConfigMaps "services") }}
   services.yaml: |
 {{ .Values.config.services | indent 4 }}
+{{- else }}
+  services.yaml: |
+{{- $configMapName := index .Values.config.existingConfigMaps "services" }}
+{{- $configMap := (lookup "v1" "ConfigMap" .Release.Namespace $configMapName) }}
+{{- if $configMap }}
+{{- if (index $configMap.data "services.yaml") }}
+{{ index $configMap.data "services.yaml" | indent 4 }}
+{{- else }}
+{{ .Values.config.services | indent 4 }}
 {{- end }}
+{{- else }}
+{{ .Values.config.services | indent 4 }}
+{{- end }}
+{{- end }}
+
 {{- if not (index .Values.config.existingConfigMaps "widgets") }}
   widgets.yaml: |
 {{ .Values.config.widgets | indent 4 }}
+{{- else }}
+  widgets.yaml: |
+{{- $configMapName := index .Values.config.existingConfigMaps "widgets" }}
+{{- $configMap := (lookup "v1" "ConfigMap" .Release.Namespace $configMapName) }}
+{{- if $configMap }}
+{{- if (index $configMap.data "widgets.yaml") }}
+{{ index $configMap.data "widgets.yaml" | indent 4 }}
+{{- else }}
+{{ .Values.config.widgets | indent 4 }}
 {{- end }}
+{{- else }}
+{{ .Values.config.widgets | indent 4 }}
+{{- end }}
+{{- end }}
+
 {{- if not (index .Values.config.existingConfigMaps "docker") }}
   docker.yaml: |
 {{ .Values.config.docker | indent 4 }}
+{{- else }}
+  docker.yaml: |
+{{- $configMapName := index .Values.config.existingConfigMaps "docker" }}
+{{- $configMap := (lookup "v1" "ConfigMap" .Release.Namespace $configMapName) }}
+{{- if $configMap }}
+{{- if (index $configMap.data "docker.yaml") }}
+{{ index $configMap.data "docker.yaml" | indent 4 }}
+{{- else }}
+{{ .Values.config.docker | indent 4 }}
 {{- end }}
+{{- else }}
+{{ .Values.config.docker | indent 4 }}
+{{- end }}
+{{- end }}
+
 {{- if not (index .Values.config.existingConfigMaps "customCss") }}
   custom.css: |
 {{ .Values.config.customCss | indent 4 }}
+{{- else }}
+  custom.css: |
+{{- $configMapName := index .Values.config.existingConfigMaps "customCss" }}
+{{- $configMap := (lookup "v1" "ConfigMap" .Release.Namespace $configMapName) }}
+{{- if $configMap }}
+{{- if (index $configMap.data "custom.css") }}
+{{ index $configMap.data "custom.css" | indent 4 }}
+{{- else }}
+{{ .Values.config.customCss | indent 4 }}
 {{- end }}
+{{- else }}
+{{ .Values.config.customCss | indent 4 }}
+{{- end }}
+{{- end }}
+
 {{- if not (index .Values.config.existingConfigMaps "customJs") }}
   custom.js: |
 {{ .Values.config.customJs | indent 4 }}
+{{- else }}
+  custom.js: |
+{{- $configMapName := index .Values.config.existingConfigMaps "customJs" }}
+{{- $configMap := (lookup "v1" "ConfigMap" .Release.Namespace $configMapName) }}
+{{- if $configMap }}
+{{- if (index $configMap.data "custom.js") }}
+{{ index $configMap.data "custom.js" | indent 4 }}
+{{- else }}
+{{ .Values.config.customJs | indent 4 }}
 {{- end }}
-{{- end }} 
+{{- else }}
+{{ .Values.config.customJs | indent 4 }}
+{{- end }}
+{{- end }}
+{{- end }}

@@ -54,158 +54,59 @@ spec:
               containerPort: 3000
               protocol: TCP
           volumeMounts:
-            {{- if eq (include "homepage.shouldCreateConfigMap" .) "true" }}
-            # Mount individual ConfigMaps with subPath for each file
-            - mountPath: /app/config/kubernetes.yaml
-              name: config-kubernetes
-              subPath: kubernetes.yaml
-            - mountPath: /app/config/settings.yaml
-              name: config-settings
-              subPath: settings.yaml
-            - mountPath: /app/config/bookmarks.yaml
-              name: config-bookmarks
-              subPath: bookmarks.yaml
-            - mountPath: /app/config/services.yaml
-              name: config-services
-              subPath: services.yaml
-            - mountPath: /app/config/widgets.yaml
-              name: config-widgets
-              subPath: widgets.yaml
-            - mountPath: /app/config/docker.yaml
-              name: config-docker
-              subPath: docker.yaml
-            - mountPath: /app/config/custom.css
-              name: config-customcss
-              subPath: custom.css
             - mountPath: /app/config/custom.js
               name: config-customjs
               subPath: custom.js
-            {{- else }}
-            # Handle mixing approach - external ConfigMaps + default ConfigMap
-            {{- $hasExternalConfigMaps := false }}
-            {{- range $key, $value := .Values.config.existingConfigMaps }}
-            {{- if $value }}
-            {{- $hasExternalConfigMaps = true }}
-            {{- if or (eq $key "customCss") (eq $key "customJs") }}
-            - mountPath: /app/config/{{ $key }}.{{ if eq $key "customCss" }}css{{ else }}js{{ end }}
-              name: config-{{ $key }}
-              subPath: {{ $key }}.{{ if eq $key "customCss" }}css{{ else }}js{{ end }}
-            {{- else }}
-            - mountPath: /app/config/{{ $key }}.yaml
-              name: config-{{ $key }}
-              subPath: {{ $key }}.yaml
-            {{- end }}
-            {{- end }}
-            {{- end }}
-            {{- if and $hasExternalConfigMaps (not .Values.config.existingConfigMap) }}
-            # Mount default ConfigMap for remaining files (mixing approach)
-            - mountPath: /app/config/kubernetes.yaml
-              name: config-kubernetes-default
-              subPath: kubernetes.yaml
-            - mountPath: /app/config/settings.yaml
-              name: config-settings-default
-              subPath: settings.yaml
-            - mountPath: /app/config/bookmarks.yaml
-              name: config-bookmarks-default
-              subPath: bookmarks.yaml
-            - mountPath: /app/config/services.yaml
-              name: config-services-default
-              subPath: services.yaml
-            - mountPath: /app/config/widgets.yaml
-              name: config-widgets-default
-              subPath: widgets.yaml
-            - mountPath: /app/config/docker.yaml
-              name: config-docker-default
-              subPath: docker.yaml
             - mountPath: /app/config/custom.css
-              name: config-customcss-default
+              name: config-customcss
               subPath: custom.css
-            - mountPath: /app/config/custom.js
-              name: config-customjs-default
-              subPath: custom.js
-            {{- end }}
-            {{- if .Values.config.existingConfigMap }}
-            # Mount main ConfigMap for remaining files
-            - mountPath: /app/config
-              name: config-main
-            {{- end }}
-            {{- end }}
+            - mountPath: /app/config/bookmarks.yaml
+              name: config-bookmarks
+              subPath: bookmarks.yaml
+            - mountPath: /app/config/docker.yaml
+              name: config-docker
+              subPath: docker.yaml
+            - mountPath: /app/config/kubernetes.yaml
+              name: config-kubernetes
+              subPath: kubernetes.yaml
+            - mountPath: /app/config/services.yaml
+              name: config-services
+              subPath: services.yaml
+            - mountPath: /app/config/settings.yaml
+              name: config-settings
+              subPath: settings.yaml
+            - mountPath: /app/config/widgets.yaml
+              name: config-widgets
+              subPath: widgets.yaml
             - mountPath: /app/config/logs
               name: logs
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       volumes:
-        {{- if eq (include "homepage.shouldCreateConfigMap" .) "true" }}
-        # Single ConfigMap with all files
         - name: config-kubernetes
           configMap:
-            name: {{ include "homepage.fullname" . }}
+            name: {{ include "homepage.configMapNameForFile" (dict "context" . "file" "kubernetes") }}
         - name: config-settings
           configMap:
-            name: {{ include "homepage.fullname" . }}
+            name: {{ include "homepage.configMapNameForFile" (dict "context" . "file" "settings") }}
         - name: config-bookmarks
           configMap:
-            name: {{ include "homepage.fullname" . }}
+            name: {{ include "homepage.configMapNameForFile" (dict "context" . "file" "bookmarks") }}
         - name: config-services
           configMap:
-            name: {{ include "homepage.fullname" . }}
+            name: {{ include "homepage.configMapNameForFile" (dict "context" . "file" "services") }}
         - name: config-widgets
           configMap:
-            name: {{ include "homepage.fullname" . }}
+            name: {{ include "homepage.configMapNameForFile" (dict "context" . "file" "widgets") }}
         - name: config-docker
           configMap:
-            name: {{ include "homepage.fullname" . }}
+            name: {{ include "homepage.configMapNameForFile" (dict "context" . "file" "docker") }}
         - name: config-customcss
           configMap:
-            name: {{ include "homepage.fullname" . }}
+            name: {{ include "homepage.configMapNameForFile" (dict "context" . "file" "customCss") }}
         - name: config-customjs
           configMap:
-            name: {{ include "homepage.fullname" . }}
-        {{- else }}
-        # Handle mixing approach - external ConfigMaps + default ConfigMap
-        {{- $hasExternalConfigMaps := false }}
-        {{- range $key, $value := .Values.config.existingConfigMaps }}
-        {{- if $value }}
-        {{- $hasExternalConfigMaps = true }}
-        - name: config-{{ $key }}
-          configMap:
-            name: {{ $value }}
-        {{- end }}
-        {{- end }}
-        {{- if and $hasExternalConfigMaps (not .Values.config.existingConfigMap) }}
-        # Default ConfigMap for remaining files (mixing approach)
-        - name: config-kubernetes-default
-          configMap:
-            name: {{ include "homepage.fullname" . }}
-        - name: config-settings-default
-          configMap:
-            name: {{ include "homepage.fullname" . }}
-        - name: config-bookmarks-default
-          configMap:
-            name: {{ include "homepage.fullname" . }}
-        - name: config-services-default
-          configMap:
-            name: {{ include "homepage.fullname" . }}
-        - name: config-widgets-default
-          configMap:
-            name: {{ include "homepage.fullname" . }}
-        - name: config-docker-default
-          configMap:
-            name: {{ include "homepage.fullname" . }}
-        - name: config-customcss-default
-          configMap:
-            name: {{ include "homepage.fullname" . }}
-        - name: config-customjs-default
-          configMap:
-            name: {{ include "homepage.fullname" . }}
-        {{- end }}
-        {{- if .Values.config.existingConfigMap }}
-        # Main ConfigMap for remaining files
-        - name: config-main
-          configMap:
-            name: {{ .Values.config.existingConfigMap }}
-        {{- end }}
-        {{- end }}
+            name: {{ include "homepage.configMapNameForFile" (dict "context" . "file" "customJs") }}
         - name: logs
           {{- if .Values.persistence.logs.enabled }}
           persistentVolumeClaim:
