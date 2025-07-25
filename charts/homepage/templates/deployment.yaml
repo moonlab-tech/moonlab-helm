@@ -110,28 +110,28 @@ spec:
         # Individual ConfigMaps for each file
         - name: config-kubernetes
           configMap:
-            name: {{ include "homepage.configMapNameForFile" (dict "context" . "file" "kubernetes") }}
+            name: {{ include "homepage.fullname" . }}-kubernetes
         - name: config-settings
           configMap:
-            name: {{ include "homepage.configMapNameForFile" (dict "context" . "file" "settings") }}
+            name: {{ include "homepage.fullname" . }}-settings
         - name: config-bookmarks
           configMap:
-            name: {{ include "homepage.configMapNameForFile" (dict "context" . "file" "bookmarks") }}
+            name: {{ include "homepage.fullname" . }}-bookmarks
         - name: config-services
           configMap:
-            name: {{ include "homepage.configMapNameForFile" (dict "context" . "file" "services") }}
+            name: {{ include "homepage.fullname" . }}-services
         - name: config-widgets
           configMap:
-            name: {{ include "homepage.configMapNameForFile" (dict "context" . "file" "widgets") }}
+            name: {{ include "homepage.fullname" . }}-widgets
         - name: config-docker
           configMap:
-            name: {{ include "homepage.configMapNameForFile" (dict "context" . "file" "docker") }}
+            name: {{ include "homepage.fullname" . }}-docker
         - name: config-customcss
           configMap:
-            name: {{ include "homepage.configMapNameForFile" (dict "context" . "file" "customCss") }}
+            name: {{ include "homepage.fullname" . }}-customcss
         - name: config-customjs
           configMap:
-            name: {{ include "homepage.configMapNameForFile" (dict "context" . "file" "customJs") }}
+            name: {{ include "homepage.fullname" . }}-customjs
         {{- else }}
         # Individual ConfigMaps for specific files
         {{- range $key, $value := .Values.config.existingConfigMaps }}
