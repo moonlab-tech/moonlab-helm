@@ -240,6 +240,11 @@ config:
 
   # Docker configuration (empty by default)
   docker: |
+    # Docker configuration
+    # Example:
+    # - name: "My Docker Host"
+    #   url: "http://localhost:2375"
+    #   icon: "docker.svg"
 
 # Persistence
 persistence:
