@@ -85,7 +85,7 @@ spec:
       volumes:
         - name: config-main
           configMap:
-            name: {{ include "homepage.configMapName" . }}
+            name: {{ include "homepage.fullname" . }}
         - name: logs
           {{- if .Values.persistence.logs.enabled }}
           persistentVolumeClaim:
