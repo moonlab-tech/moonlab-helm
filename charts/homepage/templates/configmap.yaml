@@ -7,35 +7,19 @@ metadata:
   labels:
     {{- include "homepage.labels" . | nindent 4 }}
 data:
-{{- if not (index .Values.config.existingConfigMaps "kubernetes") }}
   kubernetes.yaml: |
 {{ .Values.config.kubernetes | indent 4 }}
-{{- end }}
-{{- if not (index .Values.config.existingConfigMaps "settings") }}
   settings.yaml: |
 {{ .Values.config.settings | indent 4 }}
-{{- end }}
-{{- if not (index .Values.config.existingConfigMaps "customCss") }}
   custom.css: |
 {{ .Values.config.customCss | indent 4 }}
-{{- end }}
-{{- if not (index .Values.config.existingConfigMaps "customJs") }}
   custom.js: |
 {{ .Values.config.customJs | indent 4 }}
-{{- end }}
-{{- if not (index .Values.config.existingConfigMaps "bookmarks") }}
   bookmarks.yaml: |
 {{ .Values.config.bookmarks | indent 4 }}
-{{- end }}
-{{- if not (index .Values.config.existingConfigMaps "services") }}
   services.yaml: |
 {{ .Values.config.services | indent 4 }}
-{{- end }}
-{{- if not (index .Values.config.existingConfigMaps "widgets") }}
   widgets.yaml: |
 {{ .Values.config.widgets | indent 4 }}
-{{- end }}
-{{- if not (index .Values.config.existingConfigMaps "docker") }}
   docker.yaml: {{ .Values.config.docker | quote }}
-{{- end }}
-{{- end }}
+{{- end }} 

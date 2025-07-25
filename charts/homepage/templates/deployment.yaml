@@ -54,59 +54,57 @@ spec:
               containerPort: 3000
               protocol: TCP
           volumeMounts:
-            - mountPath: /app/config/custom.js
-              name: config-customjs
-              subPath: custom.js
-            - mountPath: /app/config/custom.css
-              name: config-customcss
-              subPath: custom.css
-            - mountPath: /app/config/bookmarks.yaml
-              name: config-bookmarks
-              subPath: bookmarks.yaml
-            - mountPath: /app/config/docker.yaml
-              name: config-docker
-              subPath: docker.yaml
-            - mountPath: /app/config/kubernetes.yaml
-              name: config-kubernetes
-              subPath: kubernetes.yaml
-            - mountPath: /app/config/services.yaml
-              name: config-services
-              subPath: services.yaml
-            - mountPath: /app/config/settings.yaml
-              name: config-settings
-              subPath: settings.yaml
-            - mountPath: /app/config/widgets.yaml
-              name: config-widgets
-              subPath: widgets.yaml
+            {{- if eq (include "homepage.shouldCreateConfigMap" .) "true" }}
+            # Mount single ConfigMap with all default files
+            - mountPath: /app/config
+              name: config
+            {{- else }}
+            # Mount individual ConfigMaps for specific files
+            {{- range $key, $value := .Values.config.existingConfigMaps }}
+            {{- if $value }}
+            {{- if or (eq $key "customCss") (eq $key "customJs") }}
+            - mountPath: /app/config/{{ $key }}.{{ if eq $key "customCss" }}css{{ else }}js{{ end }}
+              name: config-{{ $key }}
+              subPath: {{ $key }}.{{ if eq $key "customCss" }}css{{ else }}js{{ end }}
+            {{- else }}
+            - mountPath: /app/config/{{ $key }}.yaml
+              name: config-{{ $key }}
+              subPath: {{ $key }}.yaml
+            {{- end }}
+            {{- end }}
+            {{- end }}
+            {{- if .Values.config.existingConfigMap }}
+            # Mount main ConfigMap for remaining files
+            - mountPath: /app/config
+              name: config-main
+            {{- end }}
+            {{- end }}
             - mountPath: /app/config/logs
               name: logs
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       volumes:
-        - name: config-kubernetes
+        {{- if eq (include "homepage.shouldCreateConfigMap" .) "true" }}
+        # Single ConfigMap with all default files
+        - name: config
           configMap:
-            name: {{ include "homepage.configMapNameForFile" (dict "context" . "file" "kubernetes") }}
-        - name: config-settings
+            name: {{ include "homepage.configMapName" . }}
+        {{- else }}
+        # Individual ConfigMaps for specific files
+        {{- range $key, $value := .Values.config.existingConfigMaps }}
+        {{- if $value }}
+        - name: config-{{ $key }}
           configMap:
-            name: {{ include "homepage.configMapNameForFile" (dict "context" . "file" "settings") }}
-        - name: config-bookmarks
+            name: {{ $value }}
+        {{- end }}
+        {{- end }}
+        {{- if .Values.config.existingConfigMap }}
+        # Main ConfigMap for remaining files
+        - name: config-main
           configMap:
-            name: {{ include "homepage.configMapNameForFile" (dict "context" . "file" "bookmarks") }}
-        - name: config-services
-          configMap:
-            name: {{ include "homepage.configMapNameForFile" (dict "context" . "file" "services") }}
-        - name: config-widgets
-          configMap:
-            name: {{ include "homepage.configMapNameForFile" (dict "context" . "file" "widgets") }}
-        - name: config-docker
-          configMap:
-            name: {{ include "homepage.configMapNameForFile" (dict "context" . "file" "docker") }}
-        - name: config-customcss
-          configMap:
-            name: {{ include "homepage.configMapNameForFile" (dict "context" . "file" "customCss") }}
-        - name: config-customjs
-          configMap:
-            name: {{ include "homepage.configMapNameForFile" (dict "context" . "file" "customJs") }}
+            name: {{ .Values.config.existingConfigMap }}
+        {{- end }}
+        {{- end }}
         - name: logs
           {{- if .Values.persistence.logs.enabled }}
           persistentVolumeClaim:

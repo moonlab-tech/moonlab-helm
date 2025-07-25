@@ -144,23 +144,23 @@ rbac:
 
 # Configuration files
 config:
-  # Usage Examples:
-  # - Use external ConfigMaps: existingConfigMaps.settings: "my-settings"
-  # - Use default values: leave empty or don't specify
-  # - Mix both: specify only the files you want to override
-  #
-  # Use existing ConfigMaps for specific files
-  # Leave empty to use default values from the chart
-  # Note: ConfigMaps must contain the file with the correct key (e.g., "settings.yaml")
+  # Use existing ConfigMap instead of creating a new one
+  # If set, the chart will not create a ConfigMap and will use the specified one
+  # Can be combined with existingConfigMaps for mixed approach
+  existingConfigMap: ""
+  
+  # Use separate existing ConfigMaps for specific configuration files
+  # These can be used alone or combined with existingConfigMap
+  # Priority: existingConfigMaps > existingConfigMap > default values
   existingConfigMaps:
-    kubernetes: ""      # e.g., "my-kubernetes-config"
-    settings: ""        # e.g., "my-settings-config"
-    bookmarks: ""       # e.g., "my-bookmarks-config"
-    services: ""        # e.g., "my-services-config"
-    widgets: ""         # e.g., "my-widgets-config"
-    docker: ""          # e.g., "my-docker-config"
-    customCss: ""       # e.g., "my-css-config"
-    customJs: ""        # e.g., "my-js-config"
+    kubernetes: ""      # ConfigMap name for kubernetes.yaml
+    settings: ""        # ConfigMap name for settings.yaml
+    bookmarks: ""       # ConfigMap name for bookmarks.yaml
+    services: ""        # ConfigMap name for services.yaml
+    widgets: ""         # ConfigMap name for widgets.yaml
+    docker: ""          # ConfigMap name for docker.yaml
+    customCss: ""       # ConfigMap name for custom.css
+    customJs: ""        # ConfigMap name for custom.js
   
   # Default configuration values (used when existingConfigMaps are not specified)
   # Kubernetes configuration

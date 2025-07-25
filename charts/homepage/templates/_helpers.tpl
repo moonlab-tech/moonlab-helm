@@ -92,18 +92,18 @@ Usage: {{ include "homepage.configMapNameForFile" (dict "context" . "file" "kube
 
 {{/*
 Check if we should create the main ConfigMap
-Returns true if we need to create a ConfigMap for any files that don't have external ConfigMaps
+Returns true if we need to create a ConfigMap with default values
 */}}
 {{- define "homepage.shouldCreateConfigMap" -}}
 {{- $hasExistingConfigMap := .Values.config.existingConfigMap -}}
-{{- $allFilesHaveExternalConfigMaps := true -}}
+{{- $hasAnyExternalConfigMaps := false -}}
 {{- $configFiles := list "kubernetes" "settings" "bookmarks" "services" "widgets" "docker" "customCss" "customJs" -}}
 {{- range $file := $configFiles -}}
-{{- if not (index $.Values.config.existingConfigMaps $file) -}}
-{{- $allFilesHaveExternalConfigMaps = false -}}
+{{- if (index $.Values.config.existingConfigMaps $file) -}}
+{{- $hasAnyExternalConfigMaps = true -}}
 {{- end -}}
 {{- end -}}
-{{- if or $hasExistingConfigMap $allFilesHaveExternalConfigMaps -}}
+{{- if and $hasExistingConfigMap (not $hasAnyExternalConfigMaps) -}}
 false
 {{- else -}}
 true

@@ -103,7 +103,8 @@ The command removes all the Kubernetes components associated with the chart and 
 | Name                        | Description                                    | Value                    |
 | --------------------------- | ---------------------------------------------- | ------------------------ |
 | `config.existingConfigMap`  | Use existing ConfigMap instead of creating new one | `""`              |
-| `config.kubernetes.mode`    | Kubernetes integration mode                    | `cluster`                |
+| `config.existingConfigMaps` | Use separate existing ConfigMaps for each file | `{}`                     |
+| `config.kubernetes`         | Kubernetes integration configuration           | See values.yaml          |
 | `config.settings`           | Homepage settings configuration                | `""`                     |
 | `config.customCss`          | Custom CSS for Homepage                        | `""`                     |
 | `config.customJs`           | Custom JavaScript for Homepage                 | `""`                     |
@@ -204,8 +205,8 @@ ingress:
 
 ### Using Existing ConfigMaps
 
-#### Single ConfigMap
-If you have an existing ConfigMap with Homepage configuration, you can use it instead of creating a new one:
+#### Single ConfigMap (Recommended)
+If you have an existing ConfigMap with all Homepage configuration files, you can use it instead of creating a new one:
 
 ```yaml
 config:
@@ -236,37 +237,37 @@ kubectl create configmap my-homepage-config \
   --from-file=custom.js
 ```
 
-#### Separate ConfigMaps for Each File
-You can also use separate ConfigMaps for each configuration file:
+#### Separate ConfigMaps for Specific Files
+You can also use separate ConfigMaps for specific configuration files:
 
 ```yaml
 config:
   existingConfigMaps:
-    kubernetes: "homepage-kubernetes-config"
-    settings: "homepage-settings-config"
-    bookmarks: "homepage-bookmarks-config"
-    services: "homepage-services-config"
-    widgets: "homepage-widgets-config"
-    docker: "homepage-docker-config"
-    customCss: "homepage-custom-css-config"
-    customJs: "homepage-custom-js-config"
+    services: "my-services-config"
+    widgets: "my-widgets-config"
+    # Other files will use default values from the chart
 ```
 
-Example of creating separate ConfigMaps:
+Example of creating separate ConfigMaps for specific files:
 
 ```bash
-# Create individual ConfigMaps for each file
-kubectl create configmap homepage-kubernetes-config --from-file=kubernetes.yaml
-kubectl create configmap homepage-settings-config --from-file=settings.yaml
-kubectl create configmap homepage-bookmarks-config --from-file=bookmarks.yaml
-kubectl create configmap homepage-services-config --from-file=services.yaml
-kubectl create configmap homepage-widgets-config --from-file=widgets.yaml
-kubectl create configmap homepage-docker-config --from-file=docker.yaml
-kubectl create configmap homepage-custom-css-config --from-file=custom.css
-kubectl create configmap homepage-custom-js-config --from-file=custom.js
+# Create ConfigMaps for specific files only
+kubectl create configmap my-services-config --from-file=services.yaml
+kubectl create configmap my-widgets-config --from-file=widgets.yaml
 ```
 
-You can also mix and match - specify only some files to use separate ConfigMaps while others fall back to the main ConfigMap or default values.
+#### Mixed Approach (Advanced)
+You can combine both approaches - use a main ConfigMap for most files and override specific files:
+
+```yaml
+config:
+  existingConfigMap: "my-main-config"  # Contains most files
+  existingConfigMaps:
+    services: "my-custom-services"     # Override just services
+    widgets: "my-custom-widgets"       # Override just widgets
+```
+
+**Note**: When using separate ConfigMaps, only the specified files will use external ConfigMaps. All other files will use either the main ConfigMap (if specified) or default values from the chart.
 
 ### RBAC Configuration
 
@@ -319,6 +320,7 @@ See the `examples/` directory for pre-configured values files:
 
 - `examples/deployment-restart-values.yaml` - Basic deployment restart permissions
 - `examples/rbac-enhanced-values.yaml` - Comprehensive RBAC permissions for cluster management
+- `examples/mixed-configmap-values.yaml` - Mixed ConfigMap approach example
 
 Install with example configuration:
 
