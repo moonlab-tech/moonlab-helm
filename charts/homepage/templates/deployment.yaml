@@ -55,58 +55,37 @@ spec:
               protocol: TCP
           volumeMounts:
             - mountPath: /app/config/custom.js
-              name: config-customjs
+              name: config-main
               subPath: custom.js
             - mountPath: /app/config/custom.css
-              name: config-customcss
+              name: config-main
               subPath: custom.css
             - mountPath: /app/config/bookmarks.yaml
-              name: config-bookmarks
+              name: config-main
               subPath: bookmarks.yaml
             - mountPath: /app/config/docker.yaml
-              name: config-docker
+              name: config-main
               subPath: docker.yaml
             - mountPath: /app/config/kubernetes.yaml
-              name: config-kubernetes
+              name: config-main
               subPath: kubernetes.yaml
             - mountPath: /app/config/services.yaml
-              name: config-services
+              name: config-main
               subPath: services.yaml
             - mountPath: /app/config/settings.yaml
-              name: config-settings
+              name: config-main
               subPath: settings.yaml
             - mountPath: /app/config/widgets.yaml
-              name: config-widgets
+              name: config-main
               subPath: widgets.yaml
             - mountPath: /app/config/logs
               name: logs
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       volumes:
-        - name: config-kubernetes
+        - name: config-main
           configMap:
-            name: {{ include "homepage.configMapNameForFile" (dict "context" . "file" "kubernetes") }}
-        - name: config-settings
-          configMap:
-            name: {{ include "homepage.configMapNameForFile" (dict "context" . "file" "settings") }}
-        - name: config-bookmarks
-          configMap:
-            name: {{ include "homepage.configMapNameForFile" (dict "context" . "file" "bookmarks") }}
-        - name: config-services
-          configMap:
-            name: {{ include "homepage.configMapNameForFile" (dict "context" . "file" "services") }}
-        - name: config-widgets
-          configMap:
-            name: {{ include "homepage.configMapNameForFile" (dict "context" . "file" "widgets") }}
-        - name: config-docker
-          configMap:
-            name: {{ include "homepage.configMapNameForFile" (dict "context" . "file" "docker") }}
-        - name: config-customcss
-          configMap:
-            name: {{ include "homepage.configMapNameForFile" (dict "context" . "file" "customCss") }}
-        - name: config-customjs
-          configMap:
-            name: {{ include "homepage.configMapNameForFile" (dict "context" . "file" "customJs") }}
+            name: {{ include "homepage.configMapName" . }}
         - name: logs
           {{- if .Values.persistence.logs.enabled }}
           persistentVolumeClaim:
