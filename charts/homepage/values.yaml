@@ -234,7 +234,12 @@ config:
         target: _blank
 
   # Docker configuration (empty by default)
-  docker: ""
+  docker: |
+    # Docker configuration
+    # Example:
+    # - name: "My Docker Host"
+    #   url: "http://docker-host:9000"
+    #   icon: "mdi:docker"
 
 # Persistence
 persistence:

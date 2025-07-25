@@ -21,5 +21,6 @@ data:
 {{ .Values.config.services | indent 4 }}
   widgets.yaml: |
 {{ .Values.config.widgets | indent 4 }}
-  docker.yaml: {{ .Values.config.docker | quote }}
+  docker.yaml: |
+{{ .Values.config.docker | indent 4 }}
 {{- end }} 
