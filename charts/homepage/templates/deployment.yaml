@@ -81,9 +81,11 @@ spec:
               name: config-customjs
               subPath: custom.js
             {{- else }}
-            # Mount individual ConfigMaps for specific files
+            # Handle mixing approach - external ConfigMaps + default ConfigMap
+            {{- $hasExternalConfigMaps := false }}
             {{- range $key, $value := .Values.config.existingConfigMaps }}
             {{- if $value }}
+            {{- $hasExternalConfigMaps = true }}
             {{- if or (eq $key "customCss") (eq $key "customJs") }}
             - mountPath: /app/config/{{ $key }}.{{ if eq $key "customCss" }}css{{ else }}js{{ end }}
               name: config-{{ $key }}
@@ -94,6 +96,33 @@ spec:
               subPath: {{ $key }}.yaml
             {{- end }}
             {{- end }}
+            {{- end }}
+            {{- if and $hasExternalConfigMaps (not .Values.config.existingConfigMap) }}
+            # Mount default ConfigMap for remaining files (mixing approach)
+            - mountPath: /app/config/kubernetes.yaml
+              name: config-kubernetes-default
+              subPath: kubernetes.yaml
+            - mountPath: /app/config/settings.yaml
+              name: config-settings-default
+              subPath: settings.yaml
+            - mountPath: /app/config/bookmarks.yaml
+              name: config-bookmarks-default
+              subPath: bookmarks.yaml
+            - mountPath: /app/config/services.yaml
+              name: config-services-default
+              subPath: services.yaml
+            - mountPath: /app/config/widgets.yaml
+              name: config-widgets-default
+              subPath: widgets.yaml
+            - mountPath: /app/config/docker.yaml
+              name: config-docker-default
+              subPath: docker.yaml
+            - mountPath: /app/config/custom.css
+              name: config-customcss-default
+              subPath: custom.css
+            - mountPath: /app/config/custom.js
+              name: config-customjs-default
+              subPath: custom.js
             {{- end }}
             {{- if .Values.config.existingConfigMap }}
             # Mount main ConfigMap for remaining files
@@ -107,39 +136,68 @@ spec:
             {{- toYaml .Values.resources | nindent 12 }}
       volumes:
         {{- if eq (include "homepage.shouldCreateConfigMap" .) "true" }}
-        # Individual ConfigMaps for each file
+        # Single ConfigMap with all files
         - name: config-kubernetes
           configMap:
-            name: {{ include "homepage.fullname" . }}-kubernetes
+            name: {{ include "homepage.fullname" . }}
         - name: config-settings
           configMap:
-            name: {{ include "homepage.fullname" . }}-settings
+            name: {{ include "homepage.fullname" . }}
         - name: config-bookmarks
           configMap:
-            name: {{ include "homepage.fullname" . }}-bookmarks
+            name: {{ include "homepage.fullname" . }}
         - name: config-services
           configMap:
-            name: {{ include "homepage.fullname" . }}-services
+            name: {{ include "homepage.fullname" . }}
         - name: config-widgets
           configMap:
-            name: {{ include "homepage.fullname" . }}-widgets
+            name: {{ include "homepage.fullname" . }}
         - name: config-docker
           configMap:
-            name: {{ include "homepage.fullname" . }}-docker
+            name: {{ include "homepage.fullname" . }}
         - name: config-customcss
           configMap:
-            name: {{ include "homepage.fullname" . }}-customcss
+            name: {{ include "homepage.fullname" . }}
         - name: config-customjs
           configMap:
-            name: {{ include "homepage.fullname" . }}-customjs
+            name: {{ include "homepage.fullname" . }}
         {{- else }}
-        # Individual ConfigMaps for specific files
+        # Handle mixing approach - external ConfigMaps + default ConfigMap
+        {{- $hasExternalConfigMaps := false }}
         {{- range $key, $value := .Values.config.existingConfigMaps }}
         {{- if $value }}
+        {{- $hasExternalConfigMaps = true }}
         - name: config-{{ $key }}
           configMap:
             name: {{ $value }}
         {{- end }}
+        {{- end }}
+        {{- if and $hasExternalConfigMaps (not .Values.config.existingConfigMap) }}
+        # Default ConfigMap for remaining files (mixing approach)
+        - name: config-kubernetes-default
+          configMap:
+            name: {{ include "homepage.fullname" . }}
+        - name: config-settings-default
+          configMap:
+            name: {{ include "homepage.fullname" . }}
+        - name: config-bookmarks-default
+          configMap:
+            name: {{ include "homepage.fullname" . }}
+        - name: config-services-default
+          configMap:
+            name: {{ include "homepage.fullname" . }}
+        - name: config-widgets-default
+          configMap:
+            name: {{ include "homepage.fullname" . }}
+        - name: config-docker-default
+          configMap:
+            name: {{ include "homepage.fullname" . }}
+        - name: config-customcss-default
+          configMap:
+            name: {{ include "homepage.fullname" . }}
+        - name: config-customjs-default
+          configMap:
+            name: {{ include "homepage.fullname" . }}
         {{- end }}
         {{- if .Values.config.existingConfigMap }}
         # Main ConfigMap for remaining files
