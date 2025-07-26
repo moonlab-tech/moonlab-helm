@@ -5,10 +5,10 @@ type: application
 name: radarr
 home: https://github.com/Radarr/Radarr
 description: radarr helm chart for Kubernetes
-version: 1.0.0
+version: 1.0.1
 appVersion: "5.27.1"
 sources:
-  - https://github.com/M0NsTeRRR/helm-charts/tree/main/charts/radarr
+  - https://github.com/moonlab-tech/moonlab-helm/tree/main/charts/radarr
 keywords:
   - radarr
   - docker

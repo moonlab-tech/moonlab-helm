@@ -1,0 +1,33 @@
+name: Update README with Charts
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'charts/**/Chart.yaml'
+      - 'charts/**/README.md'
+  workflow_dispatch:
+
+jobs:
+  update-readme:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Update README
+        run: |
+          python .github/scripts/update-readme.py
+
+      - name: Commit changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add README.md
+          git diff --quiet && git diff --staged --quiet || git commit -m "Update README with latest charts"
+          git push 
