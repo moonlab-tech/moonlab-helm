@@ -55,11 +55,21 @@ securityContext:
 service:
   type: ClusterIP
   port: 80
+  # -- LoadBalancer IP (only used when type is LoadBalancer)
+  loadBalancerIP: ""
+  # -- Service annotations
+  annotations: {}
+  # -- External traffic policy (Local, Cluster)
+  externalTrafficPolicy: ""
+  # -- Internal traffic policy (Local, Cluster)
+  internalTrafficPolicy: ""
 
 # -- Creating PVC to store configuration
 config:
   persistence:
     enabled: true
+    # -- Use existing PVC instead of creating new one
+    existingClaim: ""
     # -- Size of persistent disk
     size: 5Gi
     # -- Annotations for PVCs
@@ -72,6 +82,8 @@ config:
     # -- Name of the permanent volume to reference in the claim.
     # Can be used to bind to existing volumes.
     volumeName: ""
+    # -- Storage class for PVC
+    storageClass: ""
 
 ingress:
   enabled: false

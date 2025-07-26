@@ -32,11 +32,13 @@ helm install radarr moonlab/radarr
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | affinity | object | `{}` |  |
-| config | object | `{"persistence":{"accessModes":["ReadWriteOnce"],"annotations":{},"enabled":true,"name":"","size":"5Gi","volumeName":""}}` | Creating PVC to store configuration |
+| config | object | `{"persistence":{"accessModes":["ReadWriteOnce"],"annotations":{},"enabled":true,"existingClaim":"","name":"","size":"5Gi","storageClass":"","volumeName":""}}` | Creating PVC to store configuration |
 | config.persistence.accessModes | list | `["ReadWriteOnce"]` | Access modes of persistent disk |
 | config.persistence.annotations | object | `{}` | Annotations for PVCs |
+| config.persistence.existingClaim | string | `""` | Use existing PVC instead of creating new one |
 | config.persistence.name | string | `""` | Config name |
 | config.persistence.size | string | `"5Gi"` | Size of persistent disk |
+| config.persistence.storageClass | string | `""` | Storage class for PVC |
 | config.persistence.volumeName | string | `""` | Name of the permanent volume to reference in the claim. Can be used to bind to existing volumes. |
 | extraEnv | list | `[]` | Environment variables to add to the radarr pods |
 | extraEnvFrom | list | `[]` | Environment variables from secrets or configmaps to add to the radarr pods |
@@ -70,6 +72,10 @@ helm install radarr moonlab/radarr
 | securityContext.runAsNonRoot | bool | `true` |  |
 | securityContext.runAsUser | int | `65534` |  |
 | securityContext.seccompProfile.type | string | `"RuntimeDefault"` |  |
+| service.annotations | object | `{}` | Service annotations |
+| service.externalTrafficPolicy | string | `""` | External traffic policy (Local, Cluster) |
+| service.internalTrafficPolicy | string | `""` | Internal traffic policy (Local, Cluster) |
+| service.loadBalancerIP | string | `""` | LoadBalancer IP (only used when type is LoadBalancer) |
 | service.port | int | `80` |  |
 | service.type | string | `"ClusterIP"` |  |
 | serviceAccount.annotations | object | `{}` | Annotations to add to the service account |
