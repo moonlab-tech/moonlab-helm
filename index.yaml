@@ -672,6 +672,30 @@ entries:
   radarr:
   - apiVersion: v2
     appVersion: 5.27.2
+    created: "2025-07-26T19:09:49.943654262Z"
+    description: radarr helm chart for Kubernetes
+    digest: 4a2b2a0755d17c8a47c61f7d26f40cb795326002b379d38995fc5516d9bd992f
+    home: https://github.com/Radarr/Radarr
+    icon: https://artifacthub.io/image/e417b561-5fe4-4ee3-9b89-f67df4069169
+    keywords:
+    - radarr
+    - docker
+    - kubernetes
+    - helm
+    - chart
+    kubeVersion: '>=1.23.0-0'
+    maintainers:
+    - name: MoonLab
+      url: https://github.com/moonlab-tech
+    name: radarr
+    sources:
+    - https://github.com/moonlab-tech/moonlab-helm/tree/main/charts/radarr
+    type: application
+    urls:
+    - https://github.com/moonlab-tech/moonlab-helm/releases/download/radarr-1.1.2/radarr-1.1.2.tgz
+    version: 1.1.2
+  - apiVersion: v2
+    appVersion: 5.27.2
     created: "2025-07-26T17:55:56.241580267Z"
     description: radarr helm chart for Kubernetes
     digest: d8f5bc8bac1773ad216d02308816e3881426e410ec44b6f3d99d67fcd13a124e
@@ -766,4 +790,4 @@ entries:
     urls:
     - https://github.com/moonlab-tech/moonlab-helm/releases/download/radarr-1.0.0/radarr-1.0.0.tgz
     version: 1.0.0
-generated: "2025-07-26T17:55:56.24165649Z"
+generated: "2025-07-26T19:09:49.943751178Z"
