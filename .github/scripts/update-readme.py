@@ -2,6 +2,7 @@
 """
 Script to automatically update README.md with chart information.
 Discovers all charts in the charts/ directory and updates the Available Charts section.
+Also updates version badges in individual chart README files.
 """
 
 import os
@@ -46,6 +47,37 @@ def get_chart_description(chart_path):
             return line[:100] + "..." if len(line) > 100 else line
     
     return ""
+
+def update_chart_readme_badges(chart_info):
+    """Update version badges in individual chart README files"""
+    readme_path = Path("charts") / chart_info['path'] / "README.md"
+    if not readme_path.exists():
+        return
+    
+    with open(readme_path, 'r', encoding='utf-8') as f:
+        content = f.read()
+    
+    # Update version badges
+    # Pattern to match version badges like ![Version: 1.0.0](...)
+    version_pattern = r'!\[Version: [^\]]+\]\([^)]+\)'
+    type_pattern = r'!\[Type: [^\]]+\]\([^)]+\)'
+    app_version_pattern = r'!\[AppVersion: [^\]]+\]\([^)]+\)'
+    
+    # Create new badges
+    new_version_badge = f"![Version: {chart_info['version']}](https://img.shields.io/badge/Version-{chart_info['version']}-informational?style=flat-square)"
+    new_type_badge = "![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)"
+    new_app_version_badge = f"![AppVersion: {chart_info['appVersion']}](https://img.shields.io/badge/AppVersion-{chart_info['appVersion']}-informational?style=flat-square)"
+    
+    # Replace badges
+    content = re.sub(version_pattern, new_version_badge, content)
+    content = re.sub(type_pattern, new_type_badge, content)
+    content = re.sub(app_version_pattern, new_app_version_badge, content)
+    
+    # Write back to file
+    with open(readme_path, 'w', encoding='utf-8') as f:
+        f.write(content)
+    
+    print(f"Updated badges in {readme_path}")
 
 def discover_charts():
     """Discover all charts in the charts/ directory"""
@@ -125,8 +157,13 @@ def main():
     for chart in charts:
         print(f"  - {chart['name']} v{chart['version']}")
     
-    print("\nUpdating README.md...")
+    print("\nUpdating main README.md...")
     update_readme(charts)
+    
+    print("\nUpdating individual chart README badges...")
+    for chart in charts:
+        update_chart_readme_badges(chart)
+    
     print("Done!")
 
 if __name__ == "__main__":
