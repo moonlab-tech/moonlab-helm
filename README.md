@@ -21,7 +21,7 @@ You can then run `helm search repo moonlab` to search the charts.
 | Chart | Description | Version |
 |-------|-------------|---------|
 | [homepage](charts/homepage/) | This Helm chart deploys [Homepage](https://gethomepage.dev/) - a highly customizable homepage (or st... | ![Version](https://img.shields.io/badge/homepage-1.3.21-success) |
-| [radarr](charts/radarr/) | radarr helm chart for Kubernetes | ![Version](https://img.shields.io/badge/radarr-1.0.1-success) |
+| [radarr](charts/radarr/) | radarr helm chart for Kubernetes | ![Version](https://img.shields.io/badge/radarr-1.1.0-success) |
 
 
 ## License
