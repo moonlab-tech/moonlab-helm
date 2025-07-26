@@ -144,25 +144,19 @@ rbac:
 
 # Configuration files
 config:
-  # Usage Examples:
-  # - Use external ConfigMaps: existingConfigMaps.settings: "my-settings"
-  # - Use default values: leave empty or don't specify
-  # - Mix both: specify only the files you want to override
-  #
-  # Use existing ConfigMaps for specific files
-  # Leave empty to use default values from the chart
-  # Note: ConfigMaps must contain the file with the correct key (e.g., "settings.yaml")
-  existingConfigMaps:
-    kubernetes: ""      # e.g., "my-kubernetes-config"
-    settings: ""        # e.g., "my-settings-config"
-    bookmarks: ""       # e.g., "my-bookmarks-config"
-    services: ""        # e.g., "my-services-config"
-    widgets: ""         # e.g., "my-widgets-config"
-    docker: ""          # e.g., "my-docker-config"
-    customCss: ""       # e.g., "my-css-config"
-    customJs: ""        # e.g., "my-js-config"
+  # Use an existing ConfigMap that contains all homepage configuration files
+  # The ConfigMap should contain the following keys:
+  # - kubernetes.yaml
+  # - settings.yaml
+  # - bookmarks.yaml
+  # - services.yaml
+  # - widgets.yaml
+  # - docker.yaml
+  # - custom.css
+  # - custom.js
+  existingConfigMap: ""
   
-  # Default configuration values (used when existingConfigMaps are not specified)
+  # Default configuration values (used when existingConfigMap is not specified)
   # Kubernetes configuration
   kubernetes: |
     mode: cluster

@@ -1,0 +1,20 @@
+apiVersion: v2
+kubeVersion: ">=1.23.0-0"
+icon: https://artifacthub.io/image/e417b561-5fe4-4ee3-9b89-f67df4069169
+type: application
+name: radarr
+home: https://github.com/Radarr/Radarr
+description: radarr helm chart for Kubernetes
+version: 1.0.0
+appVersion: "5.27.1"
+sources:
+  - https://github.com/M0NsTeRRR/helm-charts/tree/main/charts/radarr
+keywords:
+  - radarr
+  - docker
+  - kubernetes
+  - helm
+  - chart
+maintainers:
+  - name: MoonLab
+    url: https://github.com/moonlab-tech

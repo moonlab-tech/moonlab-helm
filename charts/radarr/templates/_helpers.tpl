@@ -1,7 +1,7 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "homepage.name" -}}
+{{- define "radarr.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
@@ -10,7 +10,7 @@ Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 If release name contains chart name it will be used as a full name.
 */}}
-{{- define "homepage.fullname" -}}
+{{- define "radarr.fullname" -}}
 {{- if .Values.fullnameOverride }}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
@@ -26,70 +26,45 @@ If release name contains chart name it will be used as a full name.
 {{/*
 Create chart name and version as used by the chart label.
 */}}
-{{- define "homepage.chart" -}}
+{{- define "radarr.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
 Common labels
 */}}
-{{- define "homepage.labels" -}}
-helm.sh/chart: {{ include "homepage.chart" . }}
-{{ include "homepage.selectorLabels" . }}
+{{- define "radarr.labels" -}}
+helm.sh/chart: {{ include "radarr.chart" . }}
+{{ include "radarr.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
+app.kubernetes.io/part-of: {{ .Chart.Name }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end }}
 
 {{/*
 Selector labels
 */}}
-{{- define "homepage.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "homepage.name" . }}
+{{- define "radarr.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "radarr.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
 Create the name of the service account to use
 */}}
-{{- define "homepage.serviceAccountName" -}}
+{{- define "radarr.serviceAccountName" -}}
 {{- if .Values.serviceAccount.create }}
-{{- default (include "homepage.fullname" .) .Values.serviceAccount.name }}
+{{- default (include "radarr.fullname" .) .Values.serviceAccount.name }}
 {{- else }}
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
 
 {{/*
-Get the name of the ConfigMap to use
+Create the name of the pvc config to use
 */}}
-{{- define "homepage.configMapName" -}}
-{{- if .Values.config.existingConfigMap }}
-{{- .Values.config.existingConfigMap }}
-{{- else }}
-{{- include "homepage.fullname" . }}
-{{- end }}
-{{- end }}
-
-{{/*
-Get the ClusterRole name to use
-*/}}
-{{- define "homepage.clusterRoleName" -}}
-{{- if .Values.rbac.existingClusterRole }}
-{{- .Values.rbac.existingClusterRole }}
-{{- else }}
-{{- include "homepage.fullname" . }}
-{{- end }}
-{{- end }}
-
-{{/*
-Get the ClusterRoleBinding name to use
-*/}}
-{{- define "homepage.clusterRoleBindingName" -}}
-{{- if .Values.rbac.existingClusterRoleBinding }}
-{{- .Values.rbac.existingClusterRoleBinding }}
-{{- else }}
-{{- include "homepage.fullname" . }}
-{{- end }}
+{{- define "radarr.configPersistenceName" -}}
+{{- default (printf "%s-config" (include "radarr.fullname" .)) .Values.config.persistence.name }}
 {{- end }}

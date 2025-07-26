@@ -103,14 +103,14 @@ The command removes all the Kubernetes components associated with the chart and 
 | Name                        | Description                                    | Value                    |
 | --------------------------- | ---------------------------------------------- | ------------------------ |
 | `config.existingConfigMap`  | Use existing ConfigMap instead of creating new one | `""`              |
-| `config.kubernetes.mode`    | Kubernetes integration mode                    | `cluster`                |
+| `config.kubernetes`         | Kubernetes configuration                       | See values.yaml          |
 | `config.settings`           | Homepage settings configuration                | `""`                     |
 | `config.customCss`          | Custom CSS for Homepage                        | `""`                     |
 | `config.customJs`           | Custom JavaScript for Homepage                 | `""`                     |
 | `config.bookmarks`          | Bookmarks configuration                        | See values.yaml          |
 | `config.services`           | Services configuration                         | See values.yaml          |
 | `config.widgets`            | Widgets configuration                          | See values.yaml          |
-| `config.docker`             | Docker configuration                           | `""`                     |
+| `config.docker`             | Docker configuration                           | See values.yaml          |
 
 ### Homepage Environment Variables
 
@@ -204,7 +204,6 @@ ingress:
 
 ### Using Existing ConfigMaps
 
-#### Single ConfigMap
 If you have an existing ConfigMap with Homepage configuration, you can use it instead of creating a new one:
 
 ```yaml
@@ -235,38 +234,6 @@ kubectl create configmap my-homepage-config \
   --from-file=custom.css \
   --from-file=custom.js
 ```
-
-#### Separate ConfigMaps for Each File
-You can also use separate ConfigMaps for each configuration file:
-
-```yaml
-config:
-  existingConfigMaps:
-    kubernetes: "homepage-kubernetes-config"
-    settings: "homepage-settings-config"
-    bookmarks: "homepage-bookmarks-config"
-    services: "homepage-services-config"
-    widgets: "homepage-widgets-config"
-    docker: "homepage-docker-config"
-    customCss: "homepage-custom-css-config"
-    customJs: "homepage-custom-js-config"
-```
-
-Example of creating separate ConfigMaps:
-
-```bash
-# Create individual ConfigMaps for each file
-kubectl create configmap homepage-kubernetes-config --from-file=kubernetes.yaml
-kubectl create configmap homepage-settings-config --from-file=settings.yaml
-kubectl create configmap homepage-bookmarks-config --from-file=bookmarks.yaml
-kubectl create configmap homepage-services-config --from-file=services.yaml
-kubectl create configmap homepage-widgets-config --from-file=widgets.yaml
-kubectl create configmap homepage-docker-config --from-file=docker.yaml
-kubectl create configmap homepage-custom-css-config --from-file=custom.css
-kubectl create configmap homepage-custom-js-config --from-file=custom.js
-```
-
-You can also mix and match - specify only some files to use separate ConfigMaps while others fall back to the main ConfigMap or default values.
 
 ### RBAC Configuration
 
@@ -313,19 +280,6 @@ rbac:
   create: false
 ```
 
-#### Example Configurations
-
-See the `examples/` directory for pre-configured values files:
-
-- `examples/deployment-restart-values.yaml` - Basic deployment restart permissions
-- `examples/rbac-enhanced-values.yaml` - Comprehensive RBAC permissions for cluster management
-
-Install with example configuration:
-
-```bash
-helm install homepage moonlab/homepage -f examples/deployment-restart-values.yaml
-```
-
 ### Persistence
 
 By default, logs are stored in an emptyDir volume. To enable persistent storage:
@@ -363,3 +317,4 @@ kubectl logs -l app.kubernetes.io/name=homepage
 ### Check service
 ```bash
 kubectl get svc -l app.kubernetes.io/name=homepage
+```
