@@ -36,8 +36,8 @@ jobs:
 
       - name: Commit changes
         run: |
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
+          git config user.name "MoonLab Bot"
+          git config user.email "khanhvc511@gmail.com"
           git add README.md charts/*/README.md
           git diff --quiet && git diff --staged --quiet || git commit -m "Update README with latest charts"
           git push 
