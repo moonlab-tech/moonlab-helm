@@ -64,6 +64,19 @@ service:
   # -- Internal traffic policy (Local, Cluster)
   internalTrafficPolicy: ""
 
+# -- Probe configuration
+probes:
+  liveness:
+    initialDelaySeconds: 60
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 3
+  readiness:
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 3
+
 # -- Creating PVC to store configuration
 config:
   persistence:
